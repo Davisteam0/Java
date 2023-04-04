@@ -1064,14 +1064,189 @@ class Student {
 
     需要注意的是上列代码中main()方法中创建了3个Student对象,但在3次实例化对象的加载中,静态代码块中的内容只输出了一次,这是因为静态代码块在类第一次使用时才会被加载,并且只被加载一次。
 
+###第四章面向对象(下)
+
+####4.1继承
+#####4.1.1继承的概念
+    在程序中,继承描述的是事物之间的从属关系,通过继承可以使多种事物之间形成一种关系体系。
+
+    在Java程序中,如果想要声明一个类继承另一个类,需要使用extends关键字,其语法格式为：
+
+    class 父类 {
+        ……
+    }
+    class 子类 extends 父类 {
+
+    }
 
 
+```
+//定义Animal类
+class Animal {
+    private String name;        //声明name属性
+    private int age;            //声明age属性
+    public final String COLOR = "粉色";        //定义COLOR属性
+    public String getName() {                 //定义name属性的getter方法
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public int getAge() {           //定义age属性的getter方法
+        return age;
+    }
+    public void setAge(int age) {
+        this.age = age;
+    }
+}
+//定义Dog类继承Animal类
+class Dog extends Animal {
+    //此处不写任何代码
+}
+//定义测试类
+public class Test {
+    public static void main(String[] args) {
+        Dog dog = new Dog();            //创建一个Dog类的对象
+        dog.setName("牧羊犬");          //此时调用的是父类Animal的setter方法
+        dog.setAge(3);                 //此时调用的是父类Animal的setter方法
+        System.out.println("名称："+dog.Name()+",年龄："+dog.getAge()+",颜色："+dog.COLOR);
+    }
+}
+
+```
+
+####代码说明：
+    第2~18行代码定义了一个Animal类。第20~22行代码定义了一个Dog类,Dog类通过extends关键字继承了Animal类,这样Dog类便成了Animal类的子类。
+    Dog类中并没有定义任何属性和方法。因为父类Animal中name属性和age属性使用private关键字修饰,即name属性和age属性为Animal类的私有属性,所以需要使用getter方法和setter方法访问。第26~28行代码在main()方法中创建了一个Dog类的对象dog并使用实例对象dog访问父类Animal中name和age属性的setter方法设置名称、年龄的值。第29、30行代码通过dog对象访问父类Animal中name属性和age属性的getter方法获取名称、年龄的值,通过dog对象直接访问了Animal类中非私有属性COLOR获取颜色的值。
+
+    子类除了可以继承父类的属性和方法,也可以定义自己的属性和方法。
+
+```
+//定义Animal类
+class Animal {
+    private String name;
+    private int age;
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public int getAge() {
+        return age;
+    }
+    public void setAge(int age) {
+        this.age = age;
+    }
+}
+//定义Dog类继承Animal类
+class Dog extends Animal {
+    private String color;
+    public String getColor() {
+        return color;
+    }
+    public void setColor(String color) {
+        this.color = color;
+    }
+}
+//定义测试类
+public class Test {
+    public static void main(String[] args) {
+        Dog dog = new Dog();
+        dog.setName('牧羊犬');
+        dog.setAge(3);
+        dog.setColor("粉色");
+        System.out.println("名称:"+dog.getName()+",年龄:"+dog.getAge()+",颜色:"+dog.getColor());
+    }
+}
+```
+
+####代码说明：
+    Dog类不仅继承了Animal类的属性和方法,还增加了color属性及对应的getter和setter方法。在main()方法中,第32、33行代码通过dog对象调用Animal类的setter方法设置名称和年龄;第34行代码通过dog对象调用Dog类的setter方法设置颜色;第35、36行代码通过dog对象调用Animal类和getter方法获取名称、年龄和颜色。
+
+    需要注意的是,子类虽然可以通过继承访问父类的成员和方法,但不是所以的父类属性和方法都可以被子类访问。子类只能通过访问父类中用public和protected修饰的属性和方法,父类中被默认修饰符default和privat修饰的属性和方法不能被子类访问。
+
+    在类的继承中,需要注意一些问题：
+        1)在Java中,类只支持单继承,不允许多继承。也就是说,一个类只能有一个直接父类
+
+        class A {}
+        class B {}
+        class C extends A,B {}
+
+        2）多个类可以有共同的父类
+
+        class A {}
+        class B extends A{}
+        class C extends A{}
+
+        3）在Java中,多层继承也是可以的,即一个类的父类可以再继承另外的父类。
+
+        class A {}
+        class B extends A {}
+        class C extends B {}
+
+        4)在Java中,子类和父类是相对的,一个类可以是相对的,一个类可以是某个类的父类,也可以是另一个类的子类
 
 
+####4.1.2方法的重写
 
+    在继承关系中,子类会自动继承父类中定义的方法,但有时在子类中需要对继承的方法进行一些修改,即对父类的方法进行重写。在子类中重写的方法需要和父类中被重写的方法具有相同的方法名、参数列表以及返回值类型。
 
+```
+//定义Animal类
+class Animal {
+    //定义动物叫的方法
+    void shout() {
+        System.out.println("动物发出叫声");
+    }
+}
+//定义Dog类继承Animal类
+class Dog extends Animal {
+    //重写父类的shout()方法
+    void shout()方法 {
+        System.out.println("汪汪汪……");
+    }
+}
+//定义测试类
+public class Test {
+    public static void main(String[] args) {
+        Dog dog = new Dog();
+        dog.shout();
+    }
+}
+```
 
+####代码说明：
+    第2~7行代码定义了Animal类,并在Animal类中定义了shout()方法。第9~14行代码定义了Dog类继承Animal类,在Dog类中重写了父类Animal的shout()方法。第18~19行代码创建并实例化了Dog类对象dog,并通过dog对象调用了shout()方法。
 
+    注意：
+        子类重写父类的方法时,不能使用比父类的方法更严格的访问权限。例如父类的方法是public权限,子类的方法就不能是private权限。如果子类在重写父类的方式定义的权限更严格,则在编译时将出现错误。
+
+```
+//定义Animal类
+class Animal {
+    //定义动物叫的方法
+    public void shout() {
+        System.out.println("动物发出叫声");
+    }
+}
+//定义Dog类继承Animal类
+class Dog extends Animal {
+    //重写父类的shout() {
+        System.out.println("汪汪汪……");
+    }
+}
+//定义测试类
+public class Test {
+    public static void main(String[] args) {
+        Dog dog = new Dog();
+        dog.shout();
+    }
+}
+```
+
+####代码说明：
+    第4~6行代码在Animal类中定义了一个访问权限为public的shout()方法,第9~14行代码定义了一个Dog类并继承Animal类,Dog类重写了父类的Animal的shout()方法,并将shout()方法的访问权限设置为private。
 
 
 
