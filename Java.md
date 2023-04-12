@@ -1249,16 +1249,239 @@ public class Test {
     第4~6行代码在Animal类中定义了一个访问权限为public的shout()方法,第9~14行代码定义了一个Dog类并继承Animal类,Dog类重写了父类的Animal的shout()方法,并将shout()方法的访问权限设置为private。
 
 
+    控制台打印了"汪汪汪····",调用的是Dog类的shout()方法中的输出语句,说明dog对象调用的是Dog子类重写的shout()方法,而不是父类中的shout()方法。
+
+    注意：子类重写父类方法时的访问权限
+        子类重写父类的方法时,不能使用比父类更严格的访问权限。例如,父类的方法是public权限,子类的方法就不能是private权限。如果子类在重写父类的方式时定义的权限更严格,则在编译时将出错。
+
+    下面对上述代码进行修改。
+
+```
+//定义Animal类
+class Animal {
+    //定义动物的叫的方法
+    public void shout() {
+        System.out.println("动物发出叫声");
+    }
+}
+//定义Dog类继承Animal类
+class Dog extends Animal {
+    //重写父类Animal 的shout()方法
+    private void shout() {
+        System.out.println("汪汪汪······")
+    }
+}
+//定义测试类
+public class Test {
+    public static void main(String[] args) {
+        Dog dog = new Dog();
+        dog.shout();
+    }
+}
+```
+
+    在上述代码中,在4~6行代码在Animal类中定义了一个访问权限为public的shout()方法,第9~14行代码定义了一个Dog类并继承Animal类,Dog类重写了父类Animal的shout()方法,并将shout()方法的访问权限设置为private。
+
+    运行该代码,编译器会编译错误"com.itheima.Dog中的shout()无法覆盖com.itheima.Animal中的shout()",这是因为子类重写父类方法时不能使用比父类中被重写的方法更严格的访问权限。
+
+####4.1.3super关键字
+    当子类重写父类的方法后,子类对象将无法访问父类中被子类重写过的方法。为了解决这个问题,Java提供了super关键字,使用super关键字可以在子类中访问父类的非私有方法、非私有属性以及构造方法。
+
+    1）使用super关键字访问父类的非私有属性或调用父类的非私有方法。
+    super.属性
+    super.方法(参数1,参数2,……)
+
+```
+//定义Animal类
+class Animal {
+    String name = "牧羊犬";
+    //定义动物叫的方法
+    void shout() {
+        System.out.println("动物发出的叫声")
+    }
+}
+//定义Dog类继承Animal类
+class Dog extends Animal {
+    //重写父类Animal的shout()方法,扩大了访问权限
+    public void shout() {
+        super.shout();
+        System.out.println("汪汪汪······");
+    }
+    public void prinlnName() {
+        System.out.prinltn("名字:"+ super.name");
+    }
+}
+//定义测试类
+public class Test {
+    public static void main(String[] args) {
+        Dog dog = new Dog();
+        dog.shout();
+        dog.printName();
+    }
+}
+```
+
+    在上述代码中,第2~8行代码定义了Animal类,并在Animal类中定义了name属性和shout()方法。第10~19行代码定义了Dog类,它继承了Animal类并重写了Animal类的shout方法。在Dog类的shout()方法中使用super.shout()调用了父类的shout()方法。在printName()方法中使用super.name访问了父类的成员变量name。
+
+    2）使用super关键字调用父类中的指定的构造方法
+    super(参数1,参数2,……)
+
+```
+//定义Animal
+class Animal {
+    private String name;
+    private int age;
+    public Animal (String name,int age) {
+        this.name = name;
+        this.age = age;
+    }
+    public String getName() {
+        return name;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public int getAge() {
+        return age;
+    }
+    public void setAge(int age) {
+        this.age = age;
+    }
+    public String info() {
+        return "名称：" + this.getName() +",年龄：" + this.getAge();
+    }
+}
+//定义Dog类继承Animal类
+class Dog extends Animal {
+    private String Animal {
+        private String color;
+        public Dog(String name,int age,Stirng color) {
+            super(name,age);
+            this.setColor(color);
+        }
+        public String getColor() {
+            return color;
+        }
+        public void setColor(String color) {
+            this.color = color;
+        }
+        //重写父类的info()方法
+        public String info() {
+            return super.info() + ",颜色：" + this.getColor();
+        }
+    }
+    //定义测试类
+    public class Test {
+        public static void main(String[] args) {
+            Dog dog = new Dog("牧羊犬",3,"黑色");
+            System.out.println(dog.info());
+        }
+    }
+}
+```
+    
+####代码说明
+    第29行代码在Dog类中使用super调用了父类中有两个参数的构造方法,并传递了两个参数name和age;第39~41行代码在子类Dog中重写了父类Animal的info方法,然后在重写的info方法中使用super关键字调用了父类的Animal的info()方法,，用于获取父类的info()方法返回的name和age属性的值,最后使用getter方法获取本类中的color属性的值；第46、47行代码实例化了dog对象,并在打印语句中使用dog对象调用了Dog类中的info()方法,用于打印名称、年龄和颜色。
+
+    控制台打印了"名称牧羊犬,年龄：3,颜色：黑色",说明子类Dog使用super成功调用了父类中有两个参数的构造方法,并传递了参数name和参数age的值,其其中,参数name的值为"牧羊犬",参数age的值为3。
 
 
+    注意：
+        通过super调用父类构造方法的代码必须位于子类构造方法的第一行,并且只能出现一次。
+
+    super与this关键字的作用非常相似,都可以访问属性以及调用方法和构造方法,但是两者之间还是有区别的。
+
+```
+                                            super与this的区别
+        区别点                  super                                       this
+       访问属性        直接访问父类中的非私有属性           访问本类中的属性。如果本类中没有该属性,则从父类中继续查找
+
+       调用方法        直接调用父类中的非私有方法           调用本类中的方法。如果本类中没有该方法,则从父类中继续查找
+
+    调用构造方法            调用父类构造方法,              调用本类构造方法,必须放在构造方法的首行
+                        必须放在子类构造方法的首行
+```
+
+    需要注意的是,this和super不可以同时出现,因为使用this和super调用方法的代码都要求必须放在构造方法的首行。
 
 
+####4.2final关键字
+    在默认情况下,所有成员变量和成员变量都可以被子类重写。如果父类的成员不希望被重写,可以在声明父类的成员时使用final关键字修饰。final有"最终"不可更改的含义。在Java中,可以使用final关键字修饰类、属性、方法。在使用final关键字时需要注意以下几点
+    1）使用final关键字修饰的类不能有子类
+    2）使用final关键字修饰的方法不能被子类重写
+    3）使用final关键字修饰的变量是常量,常量不可修改。
+
+####4.2.1final关键字修饰类
+    Java中使用关键字修饰的类不可继承,也就是这样的类不能派生子类。
+
+```
+    //使用final关键字修饰Animal类
+    final class Animal {
+
+    }
+    //Dog类继承Animal类
+    class Dog extends Animal {
+
+    }
+    //定义测试类
+    public class Test {
+        public void main (String[] args) {
+            Dog dog = new Dog();
+        }
+    }
+```
 
 
+####4.2.2final关键字修饰方法
+    当一个类的方法被final关键字修饰后,该类的子类讲不能重写该方法。
+
+```
+//定义Animal类
+class Animal {
+    //使用final关键字修饰shout()方法
+    public final void shout() {
+
+    }
+}
+//定义Dog类继承Animal类
+class Dog extends Animal {
+    //重写Animal类的shout()方法
+    public void shout() {
+
+    }
+    //定义测试类
+    public class Test {
+        public static void main(String[] args) {
+            Dog dog = new Dog();        
+        }
+    }
+}
+
+```
 
 
+####4.2.3final关键字修饰变量
+    Java中被final修饰的变量为常量,常量只能在声明时被赋值一次,在后面的程序中,常量的值不能被改变。如果再次对final修饰的常量赋值,则程序会在编译时报错
+
+```
+public class Test {
+    public static void main(String[] args) {
+        final int AGE = 18;            //声明并初始化常量
+        AGE = 20;            //再次被赋值会报错
+    }
+}
+
+```
+
+    在上述代码中,第3行代码使用final关键字修饰了一个int类型的变量AGE,说明AGE是一个常量,只能被赋值一次；第四行代码对AGE进行第二次赋值。
 
 
+####4.3抽象类和接口
+
+####4.3.1抽象类
 
 
 
