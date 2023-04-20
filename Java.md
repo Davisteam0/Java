@@ -1,4 +1,4 @@
-#Java
+   #Java
 
 ##方法
 
@@ -1483,6 +1483,7 @@ public class Test {
 
 ####4.3.1抽象类
 
+   
 
 
 
@@ -1503,33 +1504,689 @@ public class Test {
 
 
 
+    1）使用final关键字修饰的类不能有子类
+    2）使用final关键字修饰的方法不能被子类重写
+    3）使用final关键字修饰的变量是常量,常量不可修改。
+
+####4.2.1final关键字修饰类
+    Java中使用关键字修饰的类不可继承,也就是这样的类不能派生子类。
+
+```
+    //使用final关键字修饰Animal类
+    final class Animal {
+
+    }
+    //Dog类继承Animal类
+    class Dog extends Animal {
+
+    }
+    //定义测试类
+    public class Test {
+        public void main (String[] args) {
+            Dog dog = new Dog();
+        }
+    }
+```
 
 
+####4.2.2final关键字修饰方法
+    当一个类的方法被final关键字修饰后,该类的子类讲不能重写该方法。
+
+```
+//定义Animal类
+class Animal {
+    //使用final关键字修饰shout()方法
+    public final void shout() {
+
+    }
+}
+//定义Dog类继承Animal类
+class Dog extends Animal {
+    //重写Animal类的shout()方法
+    public void shout() {
+
+    }
+    //定义测试类
+    public class Test {
+        public static void main(String[] args) {
+            Dog dog = new Dog();        
+        }
+    }
+}
+
+```
 
 
+####4.2.3final关键字修饰变量
+    Java中被final修饰的变量为常量,常量只能在声明时被赋值一次,在后面的程序中,常量的值不能被改变。如果再次对final修饰的常量赋值,则程序会在编译时报错
+
+```
+public class Test {
+    public static void main(String[] args) {
+        final int AGE = 18;            //声明并初始化常量
+        AGE = 20;            //再次被赋值会报错
+    }
+}
+
+```
+
+    在上述代码中,第3行代码使用final关键字修饰了一个int类型的变量AGE,说明AGE是一个常量,只能被赋值一次；第四行代码对AGE进行第二次赋值。
 
 
+####4.3抽象类和接口
+
+####4.3.1抽象类
+    定义一个类时,常常需要定义一些成员方法用于描述类的行为特征,但有时这些地方的实现方式是无法确定的。例如,前面定义的Animal类中的shout()方法用于描述动物的叫声,但是不同的动物叫声也不相同,因此在shout()方法中无法准确描述动物的叫声。
+
+    针对上面描述的情况,Java提供了抽象方法来满足这种需求。抽象方法是使用abstract关键字修饰的成员方法,抽象方法在定义时不需要实现方法体。
+
+    抽象方法的语法：
+    abstract 返回值类型 方法名称(参数列表)
+
+    当一个类包含了抽象方法,该类就是抽象类。抽象类和抽象方法一样,必须使用abstract关键字进行修饰。
+
+    抽象类的语法格式：
+    abstract class 抽象类名称 {
+        属性;
+        访问权限 返回值类型 方法名 (参数) {
+            return [返回值];
+        }
+        访问权限abstract 返回值类型 抽象方法名称(参数)
+    }
+
+    从上面抽象类的语法格式中可以发现,抽象类的定义比普通类多了一个或多个抽象方法,其他地方与普通类的组成基本相同。
+    抽象类：
+        1)包含抽象方法的类必须是抽象类
+        2）声明抽象类和抽象方法时都要使用abstract关键字修饰
+        3）抽象方法只需要声明而不需要实现。
+        4）如果一个非抽象类继承了抽象类之后,那么该类必须重写抽象类中的全部抽象方法。
+
+```
+# Dog.java
+// 定义抽象类Animal
+abstract class Animal {
+    //定义抽象方法
+    abstract void shout();
+}
+
+// 定义Dog类继承抽象类Animal
+class Dog extends Animal {
+    //重写抽象方法
+    void shout() {
+        System.out.println("汪汪……");
+    }
+}
+
+// 定义测试类
+public class TestDog {
+    public static void main(String[] args) {
+        Dog.dog = new Dog();
+        dog.shout();
+    }
+}
+```
+
+#### 代码说明
+    这段代码定义了一个抽象类Animal，其中包含一个抽象方法shout()。然后定义了一个Dog类继承Animal类，并重写了shout()方法。最后定义了一个测试类TestDog，创建了一个Dog对象并调用了shout()方法。
+
+    注意：
+        使用abstract关键字修饰的抽象方法不能使用private关键字修饰,因为抽象方法必须被子类实现,如果使用了private关键字修饰抽象方法,则子类无法实现该方法。
 
 
+####4.3.2接口
+    接口是一种用来定义程序的协议,它用于描述类或结构的一组相关行为。接口是由抽象类衍生的一个概念,并由此产生了一种编程方式,可以称这种编程方式为面向接口编程。面向接口编程就是将程序的不同的业务逻辑分离,以接口的形式对接不同的业务模块。
+
+    接口中不实现任何业务逻辑,业务逻辑由接口的实现类完成。当业务需求变更时,只需要修改实现类中的业务逻辑,而不需要修改接口中的内容,以减
+    少需求变更对系统产生的影响。
+
+    在Java中,使用接口的目的是克服单继承的限制,因为一个类只能有一个父类,而一个类可以同时实现多个父接口。在JDK8之前,接口是由全局常量和抽象方法组成的。JDK8对接口进行了重新定义,接口中除了抽象方法外,还可以定义默认方法和静态方法,默认方法使用default关键字修饰,静态方法使用static关键字修饰,而且这两种方式都允许有方法体。
+
+    接口使用interface关键字声明,语法格式：
+
+    public interface 接口名 extends 接口1,接口2,…… {
+        public static final 数据类型 常量名  = 常量;
+        public abstract 返回值的数据类型 方法名（参数列表） {
+            public default 返回值的数据类型 方法名 (参数列表) {
+            }
+        }
+    }
 
 
+    上述格式中,"extends 接口1,接口2……" 表示一个接口可以有多个父接口,父接口之间使用逗号分隔。接口中的变量默认使用public static final 进行修饰,即全局变量。接口中定义的抽象方法默认使用public abstract进行修饰。
+
+    注意：
+        在很多的Java程序中,经常看到编写接口中的方法时省略了public,有很多读者认为它的访问权限是default,这实际上是错误的。不管写不写访问权限,接口中方法的访问权限永远是public。
+
+    接口本身不能直接实例化,接口中的抽象方法和默认方法只能通过接口实现类实例对象进行调用。实现类通过implements关键字实现接口,并且实现类必须重写接口中所有的抽象方法。需要注意的是,一个类可以同时实现多个接口,实现多个接口时,多个接口名需要使用英文逗号分隔开。
+
+    修饰符 class 类名 implements 接口1 ,接口2,…… {
+        ……
+    }
+
+```
+// 定义接口Animal
+interface Animal {
+    int ID = 1;                       // 定义全局变量,编号
+    String name = "柯基";              // 定义全局常量,名称
+    void shout();                     // 定义抽象方法shout()
+    public void info();               // 定义抽象方法info()
+    static int getID() {              // 定义抽象方法getID(),用于返回ID值
+        return Animal.ID;
+    }
+}
+interface Action {
+    public void eat();                  // 定义抽象方法eat()
+}
+// 定义Dog类实现Animal接口和Action接口
+class Dog implements Animal,Action {
+    //重写Action接口中的抽象方法eat()
+    public void eat() {
+        System.out.println("喜欢吃骨头");
+    }
+    // 重写Animal接口中的抽象方法info()
+    public  void shout() {
+        System.out.println("汪汪……");
+    }
+    // 重写Animal接口中的抽象方法shout()
+    public  void info() {
+        System.out.println("名称:" + name);
+    }
+}
+
+public class Test2 {
+    public static void main(String[] args) {
+        System.out.println("编号:" + Animal.getID());
+        Dog dog = new Dog();        // 创建Dog类的实例对象
+        dog.info();                 // 调用Dog类中重写的info()方法
+        dog.shout();                // 调用Dog类中重写的shout()方法
+        dog.eat();                  // 调用Dog类中重写的eat()方法
+    }
+}
+
+```
+
+####代码说明
+    代码定义了两个类和两个接口。
+
+    第一个类是一个抽象类Animal，它有一个抽象方法shout()。第二个类叫做Dog，它扩展了Animal类并覆盖了shout()方法，以在控制台上打印“汪汪……”。TestDog类创建了一个Dog实例并调用了它的shout()方法。
+
+    第一个接口叫做Animal，它有一个常量ID和一个常量name，以及两个抽象方法shout()和info()。第二个接口叫做Action，它有一个抽象方法eat()。Dog类实现了这两个接口并覆盖了它们各自的抽象方法。Test2类创建了一个Dog实例并调用了它的getID()、info()、shout()和eat()方法。
+
+    总的来说，这段代码展示了在Java中使用抽象类和接口来为相关类定义共同的行为和功能
 
 
+    需要注意的是,接口的实现类必须实现接口中的所有抽象方法,否则程序编译报错。
+
+    如果在开发中的一个子类既要实现接口又要继承抽象类，则可按照以下语法格式定义子类：
+
+    修饰符 class 类名 extends 父类名 implements 接口1,接口2,…… {
+        ……
+    }
 
 
+```
+# Test3.java
+// 定义接口Animal
+interface Animal {
+    public String name = "哈士奇";
+    public  void shout();
+    public void info();
+}
+// 定义抽象类Action
+abstract class Action {
+    public abstract void eat();
+}
+// 定义Dog类继承Action抽象类,并实现Animal接口
+class Dog extends Action implements Animal {
+    //重写Action抽象类中的抽象方法eat()
+    public void eat() {
+        System.out.println("喜欢吃骨头");
+    }
+    // 重写Animal接口中的抽象方法shout()
+    public void shout() {
+        System.out.println("汪汪……");
+    }
+    // 重写Animal接口中的抽象方法info()
+    public void info() {
+        System.out.println("名称：" + name);
+    }
+}
+// 定义测试类
+public class Test3 {
+    public static void main(String[] args) {
+        Dog dog = new Dog();        // 创建Dog类的实例对象
+        dog.info();                 // 调用Dog类中重写的info()方法
+        dog.shout();                // 调用Dog类中重写的shout()方法
+        dog.eat();                  // 调用Dog类中重写的eat()方法
+    }
+}
 
 
+```
+
+####代码说明
+    这段代码定义了一个接口 Animal，其中包含了一个 name 属性和两个抽象方法 shout() 和 info()。接着定义了一个抽象类 Action，其中包含了一个抽象方法 eat()。最后定义了一个类 Dog，它继承了 Action 抽象类并实现了 Animal 接口。在 Dog 类中，重写了 Action 抽象类中的 eat() 方法和 Animal 接口中的 shout() 和 info() 方法。最后在 Test2 类中创建了 Dog 类的实例对象，并调用了 Dog 类中重写的 info()、shout() 和 eat() 方法。
 
 
+    接口不允许继承抽象类,但是允许接口继承接口,并且一个接口可以同时继承多个接口。
 
 
+```
+# Test4.Java
+// 定义接口Animal
+interface Animal_1 {
+    public String name = "金毛";
+    public void info();
+}
+// 定义Color接口
+interface Color {
+    public void Golden();
+}
+// 定义Action接口,它同时继承Animal接口和Color接口
+interface Action_1 extends Animal_1,Color {
+    public void shout();
+}
+// 定义Dog类实现Action接口
+class Dog_1 implements Action_1 {
+    //重写Animal接口中的抽象方法info()
+    public void info() {
+        System.out.println("名称："+ name);
+    }
+    // 重写Color接口中的抽象方法black()
+    public void Golden() {
+        System.out.println("金色");
+    }
+    // 重写Action 接口中的抽象方法shout()
+    public void shout() {
+        System.out.println("汪汪……");
+    }
+}
+//定义测试类
+public class Test4 {
+    public static void main(String[] args) {
+        Dog_1 dog = new Dog_1();
+        dog.info();
+        dog.info();
+        dog.Golden();
+    }
+}
+
+```
+
+####代码说明
+    这段代码定义了三个接口和一个实现了Action1接口的Dog1类。Animal1接口中定义了一个name属性和一个info()方法，Color接口中定义了一个black()方法，Action1接口继承了Animal1和Color接口，并定义了一个shout()方法。Dog1类实现了Action1接口，并重写了其中的三个方法。在测试类Test4中，创建了一个Dog1对象，并调用了它的info()、black()方法。其中，info()方法输出了名称属性的值，black()方法输出了"金色"。
+
+#### 4.4多态
+
+#####4.4.1多态的描述
+    多态是面向对象思想中的一个非常重要的概念。在Java中,多态是指不同类的对象在调用同一个方法表现出的多种不同行为。例如,要实现一个输出动物叫声的方法,由于每种动物的叫声是不同的,因此可以在方法中接收一个动物类型的参数,当传入猫类对象时就发出猫类的叫声,当传入狗类对象就发出狗类叫声。在同一个方法中,这种由于参数类型不同而导致执行效果不同的现象就是多态。Java中的多态主要有以下两种形式：
+    1）方法的重载
+    2）对象的多态（方法的重写）
+
+```
+# Test.java
+// 对象的多态
+
+//定义抽象类 Animal
+abstract class animal {
+    abstract void shout();
+}
+// 定义Cat类继承animal抽象类
+class Cat extends animal {
+    //重写shout() 方法
+    public void shout() {
+        System.out.println("喵喵……");
+    }
+}
+// 定义Dog类继承animal抽象类
+class Dog_ extends animal {
+    //重写shout()方法
+    public void shout() {
+        System.out.println("汪汪……");
+    }
+}
+// 定义测试类
+public class Test5 {
+}
+
+```
+
+####代码说明
+    代码展示了Java中的多态性。首先定义了一个抽象类Animal，其中有一个抽象方法shout()。然后定义了两个类Cat和Dog，它们都继承了Animal类并重写了shout()方法。在测试类Test5中，创建了一个Cat类的对象an1和一个Dog类的对象an2，并将它们都转型为Animal类的对象。最后调用an1和an2的shout()方法，分别输出"喵喵……"和"汪汪……"。这是因为an1和an2虽然都是Animal类的对象，但它们实际上分别指向了Cat类和Dog类的对象，因此调用shout()方法时会分别调用它们各自的重写方法。
 
 
+#####4.4.2对象类型的转换
+对象类型转换主要分为两种情况：
+    1）向上转型：子类对象->父类对象
+    2）向下转型：父类对象->子类对象
+
+    1.对象向上转型,父类对象可以调用子类重写父类的方法,这样当需要新添加功能时,只需要新增一个子类,在子类中对父类的功能进行扩展,而不用更改父类的代码,保证了程序的安全性。对于向上转型,程序会自动完成
+
+    格式：
+
+        父类类型 父类对象 = 子类实例;
 
 
+```
+# Test6.java
+
+// 对象向上转型
+
+// 定义animal类
+class animal {
+    public void shout() {
+        System.out.println("喵喵……");
+    }
+}
+// 定义Dog类
+class Dog extends animal {
+    // 重写shout()方法
+    public void shout() {
+        System.out.println("汪汪……");
+    }
+    public void eat() {
+        System.out.println("吃骨头……");
+    }
+}
+// 测试类
+public class Test6 {
+    public static void main(String[] args) {
+        Dog dog = new Dog();
+        animal an = dog;
+        an.shout();
+    }
+}
+
+```
+
+####代码说明
+    这段代码定义了一个animal类和一个Dog类，Dog类继承了animal类并重写了其中的shout()方法和新增了一个eat()方法。在Test6类中，创建了一个Dog类的实例对象dog，并将其转型为animal类的对象an，然后调用an对象的shout()方法，输出结果为"汪汪……"。这是因为Dog类重写了animal类中的shout()方法，所以调用an对象的shout()方法时，实际上调用的是Dog类中重写后的shout()方法。
+
+    2.对象向下转型
+    除了向上转型,对象还可以向下转型。向下转型一般是为了重新获得因为向上转型而丢失的子类特性。对象在进行向下转型前,必须先进行向上转型,否则将出现对象转换异常。
+
+    在向下转型时,必须指明要转为的子类类型
+
+    父类类型 父类对象 = 子类实例;
+    子类类型 子类对象 = (子类)父类对象;
 
 
+```
+# Test7.java
+# 对象向下转型
+// 对象向下转型
 
+//定义Animal类
+
+public class Animal {
+    public void shout() {
+        System.out.println("动物叫");
+    }
+}
+// 定义Dog类
+class Dog extends Animal {
+    // 重写shout方法
+    public void shout() {
+        System.out.println("汪汪汪");
+    }
+    public void eat() {
+        System.out.println("吃骨头");
+    }
+}
+// 测试类
+public class Test1 {
+    public static void main(String[] args) {
+        Animal an = new Dog();  // 向上转型
+        Dog dog = (Dog) an;     // 向下转型
+        dog.shout();
+        dog.eat();
+    }
+}
+
+
+```
+
+####代码说明
+
+    这段代码定义了一个Animal类和一个Dog类，Dog类继承了Animal类并重写了其中的shout()方法和新增了一个eat()方法。在Test1类中，创建了一个Dog类的实例对象并将其向上转型为Animal类的对象an，然后将an对象向下转型为Dog类的对象dog，然后调用dog对象的shout()和eat()方法。
+
+    向下转型的目的是为了重新获得因为向上转型而丢失的子类特性。但是，需要注意的是，只有在进行向上转型后才能进行向下转型，否则会抛出ClassCastException异常。
+
+    以下是Java中执行向下转型的示例代码：
+    
+    父类类型 父类对象 = 子类实例;
+    子类类型 子类对象 = (子类类型) 父类对象;
+    
+    在这个示例中，子类类型继承了父类类型。首先创建一个子类类型的实例并将其向上转型为父类类型的对象。然后将父类类型的对象向下转型为子类类型的对象。
+
+    需要注意的是，向下转型应该仅在必要时并谨慎使用，否则可能会导致运行时错误。
+
+
+#### instanceof关键字
+    在Java中可以使用instanceof关键字判断一个对象是否是某个类（或接口）的实例,语法格式如下：
+
+    对象 instanceof 类（或接口）
+
+
+####Object类
+    Java提供了Object类,它是所有类的父类,每个类都直接或间接继承了Object类,因此类通常被称为超类。当定义一个类,如果没有使用extends关键字为这个类显示地指定了父类,那么会默认继承Object类。Object类的常用方法
+
+    Object类的常用方法
+
+    boolean equals()        判断两个对象是否相等
+    
+    int hashCode()          返回对象的哈希值
+
+    String toString()       返回对象的字符串表示形式
+
+
+```
+// 定义Animal
+class Animal {
+    // 定义动物叫的方法
+    void shout() {
+        System.out.println("动物叫！");
+    }
+}
+// 定义测试类
+public class Test {
+    public static void main(String[] args) {
+        Animal animal = new Animal();               //创建Animal
+        System.out.println(animal.toString());      //调用toString()方法并打印
+    }
+}
+```
+
+####代码说明：
+    在这个示例中，子类类型继承了父类类型。首先创建一个子类类型的实例并将其向上转型为父类类型的对象。然后将父类类型的对象向下转型为子类类型的对象。
+
+    需要注意的是，向下转型应该仅在必要时并谨慎使用，否则可能会导致运行时错误。
+
+    此外，Java提供了Object类，它是所有类的父类，每个类都直接或间接继承了Object类，因此类通常被称为超类。当定义一个类，如果没有使用extends关键字为这个类显示地指定了父类，那么会默认继承Object类。Object类的常用方法包括equals()方法用于判断两个对象是否相等，hashCode()方法用于返回对象的哈希值，toString()方法用于返回对象的字符串表示形式。
+
+    此外，Java中可以使用instanceof关键字判断一个对象是否是某个类
+
+
+####4.6内部类
+    在Java中,允许在一个类的内部定义类,这样的类称为内部类,内部类所在的类称为外部类。在实际开发中,根据内部类的位置、修饰符和定义方式的不同,内部类可分为4种,分别是成员内部类、局部内部类、静态内部类、匿名内部类。
+
+#####4.6.1成员内部类
+    在一个类的中除可以定义成员变量、成员方法,还可以访问外部类的所有成员,无论外部类的成员是何种访问权限。如果想通过外部类访问内部类,则需要通过外部类创建内部类对象。创建内部类对象的具体语法格式如下：
+    
+    外部类名 外部类对象 = new 外部类名();
+    外部类名.内部类名 内部类对象 = 外部类对象.new 内部类名();
+
+```
+class Outer {
+    int n = 0;
+    //外部类方法test1()
+    void test1() {
+        System.out.println("外部类成员方法test1()");
+    }
+    //下面的代码定义了成员内部类Inner
+    class Ineer {
+        int n = 1;
+        void show1() {
+            //在成员内部类的方法中访问外部类的成员变量m
+            System.out.println("外部类成员变量m = " + m);
+            //在成员内部类的方法中访问外部类的成员方法test1();
+            test1();
+        }
+        void show2() {
+            System.out.println("内部类成员方法show2()");
+        }
+    }
+    //外部类方法test2()
+    void test2() {
+        Inner inner = new Inner();
+        System.out.println("内部类成员变量n = " + inner.n);
+        inner.show2();
+    }
+}
+public class Test {
+    public static void main(String[] args) {
+        Outer.outer = new Outer();
+        Outer.Inner inner = Outer.new Inner();
+        inner.show1();
+        outer.show2();
+    }
+}
+
+```
+
+####代码说明
+    这段代码定义了一个名为Outer的外部类和一个名为Inner的成员内部类。在Outer类中，定义了两个方法test1()和test2()，以及一个成员变量n。在Inner类中，定义了两个方法show1()和show2()，以及一个成员变量n。在main()方法中，创建了一个Outer类的实例outer和一个Inner类的实例inner，并分别调用了inner的show1()方法和outer的show2()方法。
+
+    在show1()方法中，使用System.out.println()方法输出了Outer类的成员变量m和成员方法test1()的值。需要注意的是，m并没有在代码中定义，因此会导致编译错误。应该将m改为n，即System.out.println("外部类成员变量n = " + n);。
+
+    在show2()方法中，使用System.out.println()方法输出了Inner类的成员方法show2()的值。
+
+    因此，该代码的输出结果应该为：
+
+    外部类成员变量n = 1
+    外部类成员方法test1()
+    内部类成员变量n = 1
+    内部类成员方法show2()
+    
+####4.6.2局部内部类
+    局部内部类类,也称为方法内部类,是指定义在某个局部范围中的类,它和局部变量都是在方法中定义的,有效方法只限于方法内部
+
+    局部内部类可以访问外部类的所有成员变量和成员方法,而在外部类中无法直接访问局部内部类中的变量和方法。如果要在外部类中访问局部内部类的成员,只能在局部内部类的所属方法中创建内部类的对象,通过对象访问局部内部类的变量和方法。
+
+```
+class Outer {
+    int m = 0;
+    //定义一个成员变量test1()
+    void test1() {
+        System.out.println("外部类成员方法test1()");
+    }
+    void test2() {
+        //定义一个局部内部类,在局部内部类中访问外部类变量和方法
+        class Inner {
+            int n = 1;
+            void show() {
+                System.out.println("外部类成员变量m = " + m);
+                test1();
+            }
+        }
+        //访问局部内部类中的变量和方法
+        Inner inner = new Inner();
+        System.out.println("局部内部类变量n = " + inner.n);
+        inner.show();
+    }
+}
+public class Test {
+    public static void main(String[] args) {
+        Outer outer = new Outer();
+        outer.test2();  
+    }
+}
+```
+
+####代码说明
+    这段代码并不是您提供的代码，但我会根据您提供的格式解释代码。
+
+    第2~7行代码定义了一个名为Outer的外部类和一个名为Inner的局部内部类。在Outer类中，定义了两个方法test1()和test2()，以及一个成员变量n。在Inner类中，定义了一个方法show()和一个成员变量n。
+
+    在test2()方法中，创建了一个Inner类的实例inner，并调用了inner的show()方法。在show()方法中，使用System.out.println()方法输出了Outer类的成员变量n和成员方法test1()的值。
+
+    因此，该代码的输出结果应该为：
+
+    局部内部类变量n = 1
+    外部类成员变量n = 0
+    外部类成员方法test1()
+    
+
+####4.6.3静态内部类
+    静态内部类,就是使用了static关键字修饰的成员内部类。与成员内部类相比,在形式上,静态内部类只是在内部类前增加了static关键字,但在功能上,静态内部类只能访问外部类的静态成员,通过外部类访问静态内部类成员时,因为程序已经提前在静态常量区为静态内部类分配好了内存,所以即使静态内部类没有加载,依然可以通过外部类直接创建一个静态内部类对象
+
+    创建静态内部类对象的基本语法格式：
+    
+    外部类名.静态内部类 变量名  = new 外部类名.静态内部类名();
+
+```
+class Outer {
+    static int m = 0;
+    //下面的代码定义了一个静态内部类
+    static class Inner {
+        int n = 1;
+        void show() {
+            //在静态内部类的方法中访问外部类的静态变量m;
+            System.out.println("外部类静态变量m = " + m);
+        }
+    }
+}
+public class Test {
+    public static void main(String[] args) {
+        Outer static void main(String[] args) {
+            Outer.Inner innner = new Outer.Inner();
+            inner.show();
+        }
+    }
+}
+```
+
+####代码说明：
+    其中定义了一个名为Outer的类和一个名为Test的公共类。Outer类中定义了一个静态变量m和一个静态内部类Inner。Inner类中定义了一个成员变量n和一个名为show()的方法，该方法打印出m的值。在Test类的main()方法中，创建了一个Inner类的实例，并调用了show()方法。
+
+    输出结果：
+
+    外部类静态变量m = 0
+    
+    
+#####4.6.4匿名内部类
+    在Java中调式某个方法时,如果该方法的参数是接口类型,那么在传参时,除了可以传入一个接口现实类,还可以传入实现接口的匿名内部作为参数,在匿名内部类中实现接口方法。匿名内部类就是没有名称的内部类,定义匿名内部类时,其类体作为new语句的一部分。定义匿名内部类的基本语法格式：
+
+    new 继承的父类或实现的接口名() {
+        匿名内部类的类体
+    }
+
+```
+interface Animal {
+    void shout();
+}
+public class Test {
+    public static void main(String[] args) {
+        String name = "小花";
+        animalShout(new Animal() {
+            @Override
+            public void shout() {
+                System.out.println(name +"喵喵……");
+            }
+        });
+    }
+    public static void animalShout(Animal animal) {
+        an.shout();
+    }
+}
+```
+
+####代码说明：
+    这段代码定义了一个名为Animal的接口和一个名为Test的公共类。在Test类的main()方法中，创建了一个实现了Animal接口的匿名内部类的实例，并调用了animalShout()方法，将该实例作为参数传递给了animalShout()方法。animalShout()方法中调用了传入的Animal对象的shout()方法。
+
+    在匿名内部类中，重写了Animal接口中的shout()方法，该方法打印出了一个字符串，其中包含了一个名为name的局部变量的值。name变量的值在main()方法中被初始化为"小花"。
+
+    因此，当程序运行时，会输出"小花喵喵……"。
 
 
 
