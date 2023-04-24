@@ -2190,52 +2190,395 @@ public class Test {
 
 
 
+####第5章异常
+    Java中的异常是指Java程序在运行时可能出现的错误或非正常情况,例如在程序中试图打开一个根本不存在的文件、在程序中除0等。异常是否出现,通常取决于程序的输入、程序中对象的当前状态以及程序所在的运行环境。程序抛出异常之后,会对异常进行处理。异常处理将会改变程序的控制流程,出于安全性考虑,同时避免异常程序影响其他正常程序的运行,操作系统通常将出现异常的程序强行中止,并弹出系统错误提示。
+
+```
+package Try;
+
+public class Test1 {
+    public static void main(String[] arsg) {
+        int result = divide(4,0);
+        System.out.println(result);     //调用divide()方法,第2个参数为0
+    }
+    //下面的方法实现了两个整数相除
+    public static int divide(int x,int y) {
+        int result = x / y;             //定义变量result记录两个数相除的结果
+        return result;                  //将结果返回
+    }
+}
+```
+
+```
+D:\Java\jdk-17.0.1\bin\java.exe "-javaagent:D:\Intellij\IDEA\exe\IntelliJ IDEA Community Edition 2023.1\lib\idea_rt.jar=60652:D:\Intellij\IDEA\exe\IntelliJ IDEA Community Edition 2023.1\bin" -Dfile.encoding=UTF-8 -classpath D:\Intellij\IDEA\Java\Day21\out\production\Day21 Try.Test1
+Exception in thread "main" java.lang.ArithmeticException: / by zero
+	at Try.Test1.divide(Test1.java:10)
+	at Try.Test1.main(Test1.java:5)
+
+Process finished with exit code 1
+```
+
+    由上述代码可知,程序发生了算术异常(ArithmeticException),提示运算时出现了被0除的情况。异常会立即结束,无法继续向下执行。
+
+    Arithmetic Exception是一个异常类。Java提供了大量的异常类,每一个异常类都表示一种预定义的异常,这些异常类都继承自java.lang包下的Throwable类。
+
+    Throwable类的继承体系
+    
+                        Throwable
+                            |
+                     ———————————————— 
+                    |                |
+                  Error           Exception
+                    |                |
+                    |                |
+     IOError   ———— |                | ——————  ArithmeticException             |
+                    |                |
+                    |                | —————— ClassCastExcetion
+     A WTError ———— |                |
+                    |                |
+                    |                | —————— 其他子类
+     其他子类 ————   |                
 
 
+    由上列Throwable类体系可以看出Throwable类是所有异常类的父类,它有两个直接子类————Error类和————Exception类,其中,Error类代表程序中产生的错误,Exception类代表程序中产生的异常。下面分别对两个子类进行详细讲解
+
+        Error类称为错误类,它表示Java程序运行时产生的系统内部错误或资源耗尽的错误,这类错误比较严重,仅靠修改程序本身是不能恢复执行的。例如使用Java命令运行一个不存在的类就会出现Error错误。
+        
+        Exception类称为异常类,它表示程序本身可以处理的错误,在Java程序中进行的异常处理,都是针对Exception类及其子类的。在Exception类的众多子类中有一个特殊的子类————RuntimeException类,该类及其子类用于表示运行时异常。Exception类的其他子类都用于表示编译时异常。
+
+    Throwable类常用的方法
+
+        方法声明                     功能描述
+    String getMessage()         返回异常的消息字符串
+
+    String toString             返回异常的简单信息描述
+
+    void printStackTrace()      获取异常类名和异常信息以及异常出现在程序中的位置,把信息输出到控制台。
 
 
+####5.2运行时异常与编译时异常
+    在实际开发中,经常会在程序编译时产生异常,这些异常必须进行处理,否则程序无法正常运行,这种异常被称为编译时异常,也称为checked异常。还有一种异常是在程序中运行时产生的,这种异常即使不编译异常处理代码,依然可以通过编译,因此被称为运行时异常,也称为unchecked异常。
+
+    1.编译时异常
+    在Exception类中,除了RuntimeException类以外,其他子类都是编译时异常。Java编译器会对编译时异常进行检查,如果出现这类异常就必须对其进行处理,否则程序无法通过编译。
+        1）使用try…catch语句对异常进行捕获处理。
+        2）使用throws关键字声明抛出异常,有调用者对异常进行处理。
 
 
+    2.运行时异常
+    RuntimeException类以及其子类都是运行时异常。运行时异常是在程序时由Java虚拟机自动进行捕获处理的,java编译器不会对异常进行检查。也就是说,当程序中出现这类异常时,即使没有使用语句捕获异常或使用throws关键字声明抛出异常,程序也能编译通过,只是程序在运行过程中可能报错。
+
+    在Java中,常见的运行时异常有多种
+
+        运行时异常                      描述
+    ArithmeticException               算术异常
+
+    IndexOutOfBoundExcepiton        索引越界异常
+
+    ClassCastException              类型转换异常
+
+    NullPointerException            空指针异常
+
+    NumberFormarException           数字格式化异常
 
 
+    运行时异常一般是由程序中的逻辑错误引起的,在程序运行时无法恢复。例如,通过数组的索引访问数组元素时,如果索引超过了数组范围,就会发生索引越界异常。
+
+    int [] arr = new int[5]
+    System.out.println(arr[6])
+
+    在上面的代码中,由于数组arr的length为5,最大索引为4,当使用arr[6]访问数组元素时就会发生数组索引越界的异常。
+
+####5.3异常处理及语法
+
+#####5.3.1异常的产生及处理
+    一般情况下,当程序在运行过程中发生了异常时,系统会捕获抛出的异常对象并输出相应的信息,同时中止程序的运行。这种情况并不是用户所期待的,因此需要让程序接收和处理异常对象,从而避免影响其他代码的执行。当一个异常类的对象被捕获或接收后,程序就会发生流程跳转,系统中止当前的流程而跳转到专门的处理语句块,或直接跳出当前程序和Java虚拟机回到操作系统。
+
+    在Java中,通过try、catch、finally、throw、throws这5个关键字进行异常对象的处理。
+
+       关键字                          功能描述    
+        try                 放置可能引发异常的代码块
+
+        catch               后面对应异常类型和一个代码块,该代码块用于处理这种类型的异常
+
+        finally             主要对应用于回收在try代码块里打开的物理资源,如数据库连接、网络连接和磁盘文件。异常机制保证finally代码块总是被执行
+
+        throw               用于抛出一个实际的异常。它可以单独作为语句来抛出一个具体的异常对象
+
+        throws              用在方法签名中,用于声明该方法可能抛出的异常
 
 
+#####5.3.2try…catch语句
+    在上一个代码文件中,因为发生了异常导致程序立即终止,所以程序无法继续执行发生异常后的代码。为了使异常发生后的程序代码正常执行,程序需要捕获并进行处理。Java提供了try…catch语句用于捕获并处理异常,其语法格式为：
+
+    try {
+        代码块
+    } catch(Exception e) {
+        代码块
+    }
+
+    上述语法格式中,在try代码块中编写可能发生异常的Java语句,在catch代码块中编写针对异常进行处理的代码。当try代码块中的程序发生了异常时,系统会将异常的信息封装成一个异常对象,并将这个对象传递给catch代码块进行处理。catch代码块需要一个参数指明它能够接收的异常类型,这个参数必须是Exception类或其子类。
+
+    编写try…catch语句时,需要注意以下几点：
+    1）try代码块是必需的
+    2）catch代码块可以有多个,但捕获父类异常的catch代码块必须位于捕获子类异常的catch代码块后面
+    3）catch代码块必须位于try代码块之后
+
+    以下是生成try...catch语句的流程图：
+
+```
++------------------------+
+|                        |
+|        Start           |
+|                        |
++------------------------+
+              |
+              v
++------------------------+
+|                        |
+|     try {              |
+|         // 代码块      |
+|     } catch (异常类型1) {|
+|         // 异常处理1   |
+|     } catch (异常类型2) {|
+|         // 异常处理2   |
+|     } finally {         |
+|         // 释放资源   |
+|     }                  |
+|                        |
++------------------------+
+              |
+              v
++------------------------+
+|                        |
+|         End            |
+|                        |
++------------------------+
+```
+
+在上述流程图中，try...catch语句是一个结构化的异常处理机制，用于捕获和处理程序运行时发生的异常。try语句块中包含可能会抛出异常的代码块，catch语句块用于捕获指定类型的异常并进行相应的处理，finally语句块用于在无论是否有异常被捕获都会执行的操作，比如释放资源。如果try语句块中没有抛出异常，则会跳过所有catch语句块，直接执行finally语句块；如果try语句块中抛出了异常，则会依次执行匹配的catch语句块和finally语句块。最后，在try...catch语句执行完毕后，程序会继续执行紧接着的代码。
 
 
+```
+public class Test2 {
+    public static void main(String[] args) {
+        //下面的代码定义了一个try…catch语句用于捕获异常
+        try {
+            int result = aivide(4,0);
+            System.out.println(result);
+
+        } catch (Exception e) {
+            System.out.println("捕获的异常信息为：" + e.getMessage());
+        }
+    }
+    //下面的方法实现了两个整数相除
+    public static int aivide(int x,int y) {
+        int result = x / y;
+        return result;
+    }
+}
+```
+
+    在文件Test2中,第4~9行代码对可能发生异常的代码用try…catch语句进行了处理。在try代码块中发生除0异常时,程序会通过catch代码块捕获异常,第8行代码在catch代码块对异常处理完毕后,程序仍会向下执行,而不会中止。
+
+    需要注意的是在try代码块中,发生异常的语句后面的代码是不会被执行的,例如文件Test2中第6行代码块就没有执行。
 
 
+#####5.3.3finally语句
+    在程序中,有时候希望一些语句无论程序是否发生异常都要执行,这时就可以在try…catch语句后加一个finally代码块。finally代码块是try…catch…finally或try…finally结构的一部分,finally代码块只能出现在try…catch或try代码块之后,不能单独出现。try…catch…finally实现异常处理的语法如下：
+
+    try {
+        代码块
+    } catch (ExceptionType e) {
+        代码块
+    } finally {
+        代码块
+    }
 
 
+    需要注意的是,finally代码块必须位于所有catch代码块之后。try…catch…finally语句的异常处理。
+
+    首先，程序执行 try 中的代码块。
+    如果没有异常抛出，程序将跳过 catch 块并执行 finally 块，然后继续执行程序。
+
+    如果在 try 块中抛出了异常，则程序将停止执行 try 块中的代码，跳到 catch 块中处理异常。
+
+    catch 块中的代码将处理异常，然后程序将执行 finally 块中的代码。
+
+    如果在 catch 块中又抛出了异常，则程序将停止执行 catch 块中的代码并跳到 finally 块中处理新的异常。
+
+    最终，程序将执行 finally 块中的代码后继续执行程序。无论是否有异常抛出，finally 块中的代码都将被执行。   
 
 
+```
+package Try;
+
+public class Test2 {
+    public static void main(String[] args) {
+        //下面的代码定义看一个try…catch…finally语句用于捕获异常
+        try {
+            int result = divide(4,0);
+            System.out.println(result);
+        } catch (Exception e) {
+            System.out.println("捕获的异常信息为:"+ e.getMessage());
+            return;
+        } finally {
+            System.out.println("进入finally代码块");
+        }
+        System.out.println("程序继续向下…");
+        }
+        //下面的方法实现了两个整数相除
+        public static int divide(int x,int y) {
+            int result = x / y;
+            return result;
+    }
+}
+```
+
+    在文件package Test2中,第9行代码块中增加了一个return语句,用于结束当前方法,这样catch代码块执行完之后,第13行代码就不会执行了。但是finally代码块中的代码仍会执行,不受return语句影响。也就是说,无论程序是发生异常还是使用return语句结束,finally代码块中的语句都会执行。因此,在程序设计时,通常会使用return语句结束,finally代码块中的语句都会执行。因此在程序设计时,通常会使用finally代码块处理必须做的事情,如释放资源。
+
+    需要注意的事,如果在try…catch中执行了System.exit(0)语句,那么finally代码块不再执行。System.exit(0)表示退出当前的Java虚拟机,Java虚拟机停止了,任何代码都不能再执行了。
+
+####5.4抛出异常
+    在编程过程中,有些异常暂时不需要处理,此时可以将异常抛出,让该类的调用者处理。Java提供了throw关键字和throw关键字用于抛出异常。
+
+#####5.4.1throws关键字
+    因为调用的是程序开发者自己编写的divide()方法,所以程序开发者很清楚该方法可能发生的异常。但是在实际开发中,大部分情况下程序开发者会调用别人编写的方法,并不知道别人编写的方法是否会发生异常。针对这种情况,Java允许在方法的后面使用throws关键字声明该方法有可能发生的异常,这样调用者在调用该方法时,就明确地知道该方法有异常,并且必须在程序中对异常进行处理,否则编译无法通过。
+
+```
+修饰符 返回值类型 方法名 (参数1,参数2,……) throws 异常类1,异常类2,…… {
+    方法体
+}
+```
 
 
+```
+package Try;
+
+public class Test3 {
+    public static void main(String[] args) {
+        int result = divide(4,2);           // 调用divide()方法
+        System.out.println(result);
+    }
+    //下面的方法实现了两个整数相除,并使用throws关键字声明抛出异常
+    public static int divide (int x,int y) throws Exception {
+        int result = x / y;                       // 定义变量result记录两个数相除的结果
+        return result;                           // 将结果返回
+    }
+}
+
+```
+
+    在文件package Try Test3中,第三行代码调用divide()方法时传入的第2个参数为2,程序在运行时不会发生被0除的异常。但是运行程序依然会提示错误,这是因为定义divide()方法时对抛出的异常进行处理,否则就会发生编译错误。
+
+```
+package Try;
+
+public class Test4 {
+    public static void main(String[] args) {
+        //下面的代码定义了一个try…catch语句用于捕获异常
+        try {
+            int result = divide(4,2);               // 调用divide()方法
+            System.out.println(result);
+        } catch (Exception e) {                     //对捕获的异常进行处理
+            e.printStackTrace();                    //打印捕获的异常信息
+        }
+    }
+    //下面的方法实现了两个整数相除,并使用throws关键字声明抛出异常
+    public static int divide(int x,int y) throws Exception {
+        int result = x / y;
+        return result;
+    }
+}
+
+```
+
+    在调用divide方法时,如果不知道如何处理声明抛出的异常,也可以使用throws关键字继续将异常抛出,这样程序也能编译通过。需要注意的是,使用throws关键字重抛异常时,如果程序发生了异常,并且上一层调用者也无法处理异常时,那么异常会继续被向上抛出,最终直到系统接收到异常,中止程序执行。
+
+```
+package Try;
+
+public class Test5 {
+    public static void main(String[] args) throws Exception {
+        int result = divide(4,0);
+        System.out.println(result);
+    }
+    // 下面的方法实现了两个整数相除,并使用throws关键字声明抛出异常
+    public static int divide(int x,int y) throws Exception {
+        int result = x / y;
+        return result;
+    }
+}
+
+```
 
 
+#####5.4.2throw关键字
+    在Java程序中,除了throws关键字,还可以使用throws关键字抛出异常。与throws关键字不同的是,throws关键字用于方法体内,抛出的是一个异常实例,并且每次只能抛出一个异常实例。
+
+```
+    throw ExceptionInstance;
+```
+
+    在方法中,通过throw关键字抛出异常后,还需要使用throws关键字或try…catch语句对异常进行处理。如果throw抛出的是Error、RuntimeException或它们的子类异常对象,则无须使用throws关键字或try…catch语句对异常进行处理
+
+    使用throw关键字抛出异常,通常有如下两种情况：
+
+    1）当throw关键字抛出的异常是编译时异常时,有两种处理方式：第一种处理方式是在try代码块里使用throw关键字抛出异常,通常try代码块捕获该异常；第二种处理方式是在一个有throw声明的方法中使用throw关键字抛出异常,把异常交给该方法的调用者处理。
+
+    2）当throw关键字抛出的异常是运行时异常时,程序既可以显式使用try…catch语句捕获并处理该异常,也可以完全不理会该异常,而把该异常交给方法的调用者处理。
+
+```
+package Try;
+
+public class Test6 {
+    // 定义printAge()输出年龄
+    public static void printAge(int age) throws Exception {
+        if (age <= 0) {
+            //对业务逻辑进行判断,当输入年龄为负数时抛出异常
+            throw new Exception("输入的年龄有误,必须是正整数！");
+        } else {
+            System.out.println("此人年龄为：" + age);
+        }
+    }
+    public static void main(String[] args) {
+        //下面的代码定义了一个try…catch语句用于捕获异常
+        int age = -1;
+        try {
+             printAge(age);
+        } catch (Exception e) {
+            System.out.println("捕获的异常信息为：" + e.getMessage());
+        }
+    }
+}
+
+```
 
 
+####5.5自定义异常类
+    Java中定义了大量的异常类,虽然这些异常类可以描述编程时出现的大部分异常情况,但是在程序开发中有时可能需要描述程序中特有的异常情况。例如,两数相除,不允许被除数为负数。此时,就无法使用Java提供的异常类表示该类异常。为了解决这个问题,Java允许用户自定义异常类,自定义异常类必须继承Exception类或其子类。
+
+    自定义异常类的示例代码：
+
+    class DivideByMinusException extends Exception {
+        public DivideByMinusException () {
+            super();        //调用Exception的无参构造方法
+        }
+        public DivideByMinusException (String message) {
+            super(message);      //调用Exception的有参构造方法
+        }
+    }
+
+    在实例开发当中,如果没有特殊的要求,自定义的异常类只需要继承Exception类,在构造方法中使用super()语句调用Exception的构造方法即可。
+
+    使用自定义的异常类,需要用到throw关键字。使用throw关键字在方法中声明异常的实例对象,语法格式如下：
+
+    throw Exception 异常对象
 
 
+```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+```
 
 
 
