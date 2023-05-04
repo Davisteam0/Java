@@ -2577,22 +2577,551 @@ public class Test6 {
 
 
 ```
+package Try;
+
+class DivideByMinusException extends Exception {
+    public DivideByMinusException () {
+        super();                //调用Exception无参的构造方法
+    }
+    public DivideByMinusException (String message) {
+
+        super(message);         //调用Exception有参的构造方法
+    }
+}
+public class Test7 {
+    public static void main(String[] args) {
+        int result = divide(4,-2);
+        System.out.println(result);
+    }
+    //下面的方法实现了两个整数相除
+    public static int divide(int x,int y) {
+        if (y < 0) {
+            throw new DivideByMinusException("除数是负数");
+        }
+        int result = x / y;             //定义变量result记录两个数相除的结果
+        return result;                  //将结果返回
+    }
+}
+```
+
+```
+D:\Intellij\IDEA\Java\Day21\src\Try\Test7.java:20:13
+java: 未报告的异常错误Try.DivideByMinusException; 必须对其进行捕获或声明以便抛出
+```
+
+    在上列报错可以看出,程序在编译时就发生了异常。因为在一个方法内使用throw关键字抛出异常对象时,需要使用try…catch语句对抛出的异常进行处理。但是文件Test7没有这样做。
+    为了解决上面代码出现的问题,对文件进行修改,在divid()方法后面使用throws关键字声明该方法抛出DivideByMinusException异常,并在调用divide()方法时使用try…catch语句对异常进行处理。
+
+
+```
+package Try;
+
+class DivideByMinusException extends Exception {
+    public DivideByMinusException () {
+        super();                //调用Exception无参的构造方法
+    }
+    public DivideByMinusException (String message) {
+
+        super(message);         //调用Exception有参的构造方法
+    }
+}
+public class Test7 {
+    public static void main(String[] args) {
+        //下面的代码定义了一个try…catch语句用于捕获异常
+        try {
+            int result = divide(4,-2);
+            System.out.println(result);
+        } catch (DivideByMinusException e) {        // 对捕获的异常进行处理
+            System.out.println(e.getMessage());     // 打印捕获的异常信息
+        }
+    }
+    //下面的方法实现了两个整数相除,并使用throws关键字声明抛出自定义异常
+    public static int divide(int x,int y) throws DivideByMinusException {
+        if (y < 0) {
+            throw new DivideByMinusException("除数是负数");
+        }
+        int result = x / y;             //定义变量result记录两个数相除的结果
+        return result;                  //将结果返回
+    }
+}
+
+```
+
+```
+D:\Java\jdk-17.0.1\bin\java.exe "-javaagent:D:\Intellij\IDEA\exe\IntelliJ IDEA Community Edition 2023.1\lib\idea_rt.jar=54441:D:\Intellij\IDEA\exe\IntelliJ IDEA Community Edition 2023.1\bin" -Dfile.encoding=UTF-8 -classpath D:\Intellij\IDEA\Java\Day21\out\production\Day21 Try.Test7
+除数是负数
 
 ```
 
 
+在文件Test7中,第20行代码在定义divide()方法时,使用throws关键字抛出了DivideByMinusException异常。在main()方法中,第12~17行代码使用try…catch语句捕获处理divide()方法抛出的异常。在调用的异常。在调用divide()方法时,如果传入的除数为负数,程序会抛出自定义的DivideByMinusException异常,该异常最终被catch代码块捕获并处理,最后打印出异常信息。
+
+
+###第6章JavaAPI
+###6.1字符串类
+####6.1.1String类
+    在使用String类进行字符串操作之前,首先需要初始化一个String类对象。在Java中可以通过两种方式对String类对象进行初始化。
+
+    第一种方式是使用字符串常量直接初始化一个String对象,语法格式如下：
+
+        String 变量名 = 字符串;
+
+    使用上述语法格式初始化String对象时,既可以将String对象的初始化值设为空,也可以将其初始化为一个具体的字符串。
+
+    String str1 = null          将字符串str1设置为空
+    String str2 = "";           将字符串str2设置为空字符串
+    String str3 = "abc";        将字符串str3设置为"abc"
+
+    每个字符串常量都可以当作一个String类的对象使用,因此字符串常量可以直接调用String类中提供的API
+
+    int len = "Hello World".length();       //len为11,即字符串包含的字符个数
+
+    String类是专门用于处理字符串的类。字符串一旦被创建,其内容就不能再改变。
+
+    String s = "hello";
+    s = "helloworld";
+
+    上述代码首先定义了一个类型为String的字符串s,并将其初始化为"hello"。接着将字符串s重新赋值为"helloword"。
+
+    第二种方式是调用String类的构造方法初始化字符串对象。
+
+    String 变量名 = new String(字符串);
+
+    在上述语法格式中,字符串同样可以为空或是一个具体的字符串。当为具体字符串时,String会根据参数类型调用相应的 构造方法来初始化字符串对象。
+
+            String类的常见构造方法
+    String()                            创建一个空字符串
+    String(String value)                根据指定的value创建字符串
+    String(char[] value)                根据指定的字符数组创建字符串
+    String(byte[] byte)                 根据指定的字节数组创建字节串
+
+
+```
+package JavaAPI;
+
+public class Test1 {
+    // 这是一个Javaapi测试类
+
+    //String 类
+    public static void main(String[] args) {
+        //创建一个空字符串
+        String str1 = new String();
+        //创建一个内容为abc的字符串
+        String str2 = new String("abc");
+        //创建一个字符数组
+        char[] charArray = new char[] {'D','E','F'};
+        String str3 = new String(charArray);
+        //创建一个字节数据
+        byte[] byteArray = new byte[] {97,98,99};
+        String str4 = new String(byteArray);
+        //输出字符串
+        System.out.println('a' + str1 + 'b');
+        System.out.println(str2);
+        System.out.println(str3);
+        System.out.println(str4);
+    }
+}
+
+```
+
+注意：
+    连接运算符可以通过运算符+来实现。例如,在文件6-1中,第13行代码中的"a" + str1 + "b"的作用就是将3个字符串拼接到一起并生成一个新的字符串。在Java程序中,如果+两边的操作数中有一个为String类型,那么+就表示字符串连接运算符。
+
+
+####6.1.2String类的常用方法
+    
+
+    1. length()
+
+    方法声明：public int length()
+
+    功能描述：返回此字符串的长度。
+
+    2. charAt(int index)
+
+    方法声明：public char charAt(int index)
+
+    功能描述：返回指定索引位置的字符。
+
+    3. substring(int beginIndex, int endIndex)
+
+    方法声明：public String substring(int beginIndex, int endIndex)
+
+    功能描述：返回从beginIndex开始到endIndex-1位置的子字符串。
+
+    4. indexOf(char c)或indexOf(String str)
+
+    方法声明：public int indexOf(char c) 或 public int indexOf(String str)
+
+    功能描述：返回字符或字符串在字符串中第一次出现的位置，如果没有出现则返回-1。
+
+    5. lastIndexOf(char c)或lastIndexOf(String str)
+
+    方法声明：public int lastIndexOf(char c) 或 public int lastIndexOf(String str)
+
+    功能描述：返回字符或字符串在字符串中最后一次出现的位置，如果没有出现则返回-1。
+
+    6. equals(Object obj)
+
+    方法声明：public boolean equals(Object obj)
+
+    功能描述：比较字符串是否相等。
+
+    7. equalsIgnoreCase(String str)
+
+    方法声明：public boolean equalsIgnoreCase(String str)
+
+    功能描述：比较字符串是否相等，忽略大小写。
+
+    8. startsWith(String prefix)
+
+    方法声明：public boolean startsWith(String prefix)
+
+    功能描述：判断字符串是否以指定的前缀开头。
+
+    9. endsWith(String suffix)
+
+    方法声明：public boolean endsWith(String suffix)
+
+    功能描述：判断字符串是否以指定的后缀结尾。
+
+    10. toUpperCase()
+
+    方法声明：public String toUpperCase()
+
+    功能描述：将字符串转换成大写字母。
+
+    11. toLowerCase()
+
+    方法声明：public String toLowerCase()
+
+    功能描述：将字符串转换成小写字母。
+
+    12. trim()
+
+    方法声明：public String trim()
+
+    功能描述：去除字符串首尾的空格。
+
+    13. replace(char oldChar, char newChar)或replace(CharSequence target, CharSequence replacement)
+
+    方法声明：public String replace(char oldChar, char newChar) 或 public String replace(CharSequence target, CharSequence replacement)
+
+    功能描述：将字符串中的指定字符或字符串替换为另一个字符或字符串。
+
+    14. split(String regex)
+
+    方法声明：public String[] split(String regex)
+
+    功能描述：按照指定的正则表达式分割字符串为字符串数组。
+
+    15. format(String format, Object... args)
+
+    方法声明：public static String format(String format, Object... args)
+
+    功能描述：使用指定的格式化字符串和参数生成一个格式化字符串。
+
+```
+1.获取字符串长度以及访问字符串中的字符
+package JavaAPI;
+
+// a:为下列输出代码添加注释
+
+public class Test1 {
+    public static void main(String[] args) {
+        String s = "abaabcacbcabcab";                //定义一个字符串
+        //获取字符串长度
+        System.out.println(s.length());             // 定义一个名为s的字符串变量并将其赋值为"abaabcacbcabcab"
+        //获取指定位置的字符
+        System.out.println(s.charAt(2));            // 打印字符串s的长度
+        //获取指定字符的位置
+        System.out.println(s.indexOf('a'));         // 打印字符串s中索引为2的字符
+        //获取指定字符的位置
+        System.out.println(s.indexOf('a', 2));      // 打印字符'a'在字符串s中第一次出现的索引
+        //获取指定字符串的位置
+        System.out.println(s.indexOf("abc"));       // 打印字符'a'在字符串s中从索引2开始第一次出现的索引
+        //获取指定字符串的位置
+        System.out.println(s.indexOf("abc", 2));    // 打印字符串"abc"在字符串s中第一次出现的索引
+    }
+}
+
+```
+
+
+```
+2.字符串的转换操作
+package JavaAPI;
+
+public class Test2 {
+    public static void main(String[] args) {
+        String str = "abcdef";
+        System.out.println("将字符串转换为字符数组后的结果：");
+        char[] charArray = str.toCharArray();   // 将字符串转换为字符数组
+        for(int i = 0;i < charArray.length;i++){
+            if (i != charArray.length - 1) {
+                // 如果不是数组的最后一个元素，就输出数组元素后面跟一个逗号
+                System.out.print(charArray[i] + ",");
+            } else {
+                // 如果是数组的最后一个元素，就输出数组元素后面不跟逗号
+                System.out.println(charArray[i]);
+            }
+        }
+        System.out.println("将int值转换为String类型之后的结果：" + String.valueOf(12));
+        System.out.println("将字符串转换成大写之后的结果：" + str.toUpperCase());
+        System.out.println("将字符串转换成小写之后：" + str.toLowerCase());
+    }
+}
+```
+
+
+```
+3.字符串的替换和去除空格操作
+package JavaAPI;
+
+public class Test3 {
+    public static void main(String[] args) {
+        String s = "itcast";
+        //字符串替换操作
+        System.out.println("将it替换成cn.it的结果：" + s.replace('t', 'T'));    // 将字符串s中的字符't'替换成'T'
+        //字符串去除空格操作
+        String s1 = "   i t c a s t   ";
+        System.out.println("去除字符串两端空格后的结果：" + s1.trim());              // 去除字符串s1中的空格
+        System.out.println("去除字符串中所有的空格后的结果：" + s1.replace(" ",""));                  // 打印字符串s1
+    }
+}
+
+```
+
+```
+4字符串判断.
+package JavaAPI;
+
+public class Test4 {
+    public static void main(String[] args) {
+        String s1 = "String";
+        String s2 = "String";
+        System.out.println("判断s1字符串对象是否以Str开头：" + s1.startsWith("Str"));
+        System.out.println("判断字符串对象是否以ng结尾：" + s1.endsWith("ng"));
+        System.out.println("判断字符串对象是否包含字符串tri：" + s1.contains("tri"));
+        System.out.println("判断字符是否为空：" + s1.isEmpty());
+        System.out.println("判断两个字符串是否相等：" + s1.equals(s2));
+        System.out.println("判断两个字符串是否相等（忽略大小写）：" + s1.equalsIgnoreCase(s2));
+
+    }
+}
+
+```
+
+```
+5.字符串的截取和分割操作
+package JavaAPI;
+
+public class Test5 {
+    public static void main(String[] args) {
+        String str = "武汉-青岛-深圳";
+        //下面的代码将字符串str以"-"进行分割
+        System.out.println("将字符串以-进行分割的结果如下所示：");
+        System.out.println("从第5个字符截取到末尾的结果：" + str.substring(4));    // 截取字符串str从索引5开始到末尾的子串
+        System.out.println("从第5个字符截取到第6个字符的结果：" + str.substring(4, 6)); // 截取字符串str从索引5开始到索引7之间的子串
+        //下面是字符串分割操作
+        System.out.println("将字符串以-进行分割的结果如下所示：");
+        String[] strArray = str.split("-");         // 将字符串str以"-"进行分割
+        for(int i = 0;i < strArray.length;i++){
+            if (i != strArray.length - 1) {
+                // 如果不是数组的最后一个元素，就输出数组元素后面跟一个逗号
+                System.out.print(strArray[i] + ",");
+            } else {
+                // 如果是数组的最后一个元素，就输出数组元素后面不跟逗号
+                System.out.println(strArray[i]);
+            }
+        }
+    }
+}
+
+```
+
+字符串索引越界异常
+    String字符串在获取某个字符时,会用到字符的索引。当访问字符串中的字符时,如果字符的索引不存在,则会发生StringIndexOutOfBoundException(字符串索引越界异常)。
+
+
+####6.1.3StringBuffer类
+    在Java中,因为String类是final类型的,所以使用String定义的字符串是一个常量,也就是说使用String定义的字符串一旦创建,其内容和长度是不可改变的。为了便于对字符串进行修改,Java提供了StringBuffer类(也称字符串缓冲区)来操作字符串。StringBuffer类和String类最大的区别在于它的内容和长度都是可以改变的。StringBuffer类就像一个字符容器,当在其中添加或删除字符时,操作的都是这个字符容器,因此并不会产生新的StringBuffer对象。
+
+
+    StringBuffer类是Java中一个线程安全的可变字符串类，它实现了可变字符串的增删改查等操作。下面是StringBuffer类的一些常用方法：
 
 
 
+    1. append(String str)或append(Object obj)
+
+    方法声明：public synchronized StringBuffer append(String str) 或 public synchronized StringBuffer append(Object obj)
+
+    功能描述：将指定的字符串或对象添加到当前字符串缓冲区的末尾。
+
+    2. insert(int offset, String str)或insert(int offset, Object obj)
+
+    方法声明：public synchronized StringBuffer insert(int offset, String str) 或 public synchronized StringBuffer insert(int offset, Object obj)
+
+    功能描述：在指定偏移量处插入指定的字符串或对象。
+
+    3. delete(int start, int end)
+
+    方法声明：public synchronized StringBuffer delete(int start, int end)
+
+    功能描述：删除从start开始到end-1位置的字符。
+
+    4. deleteCharAt(int index)
+
+    方法声明：public synchronized StringBuffer deleteCharAt(int index)
+
+    功能描述：删除指定索引位置的字符。
+
+    5. replace(int start, int end, String str)
+
+    方法声明：public synchronized StringBuffer replace(int start, int end, String str)
+
+    功能描述：使用指定的字符串替换从start开始到end-1位置的字符。
+
+    6. substring(int start, int end)
+
+    方法声明：public synchronized String substring(int start, int end)
+
+    功能描述：返回从start开始到end-1位置的字符串。
+
+    7. indexOf(String str)或indexOf(String str, int fromIndex)
+
+    方法声明：public synchronized int indexOf(String str) 或 public synchronized int indexOf(String str, int fromIndex)
+
+    功能描述：返回指定字符串在字符串缓冲区中第一次出现的位置，如果没有出现则返回-1。
+
+    8. lastIndexOf(String str)或lastIndexOf(String str, int fromIndex)
+
+    方法声明：public synchronized int lastIndexOf(String str) 或 public synchronized int lastIndexOf(String str, int fromIndex)
+
+    功能描述：返回指定字符串在字符串缓冲区中最后一次出现的位置，如果没有出现则返回-1。
+
+    9. capacity()
+
+    方法声明：public synchronized int capacity()
+
+    功能描述：返回字符串缓冲区的当前容量。
+
+    10. charAt(int index)
+
+    方法声明：public synchronized char charAt(int index)
+
+    功能描述：返回指定索引位置的字符。
+
+    11. setCharAt(int index, char ch)
+
+    方法声明：public synchronized void setCharAt(int index, char ch)
+
+    功能描述：将指定索引位置的字符设置为指定的字符。
+
+    12. length()
+
+    方法声明：public synchronized int length()
+
+    功能描述：返回字符串缓冲区中字符的数量。
+
+    13. ensureCapacity(int minimumCapacity)
+
+    方法声明：public synchronized void ensureCapacity(int minimumCapacity)
+
+    功能描述：确保字符串缓冲区的容量至少是指定的最小容量。
+
+    14. trimToSize()
+
+    方法声明：public synchronized void trimToSize()
+
+    功能描述：将字符串缓冲区的容量设置为当前字符数量。
 
 
+```
+package JavaAPI;
+
+public class Test6 {
+    public static void main(String[] args) {
+        System.out.println("1.添加-------------------");
+        add();
+        System.out.println("2.删除-------------------");
+        remove();
+        System.out.println("3.修改-------------------");
+        update();
+        System.out.println("4.查询-------------------");
+        query();
+    }
+    public static void add() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("abcdefg");
+        sb.append("ljc").append("klmn");
+        System.out.println("append添加结果：" + sb);
+        sb.insert(2,"qq");
+        System.out.println("insert添加结果：" + sb);
+    }
+    public static void remove() {
+        StringBuffer sb = new StringBuffer("abcdefg");
+        sb.delete(1,5);
+        System.out.println("删除指定位置的结果：" + sb);
+        sb.deleteCharAt(2);
+        System.out.println("删除指定位置的结果：" + sb);
+        sb.delete(0,sb.length());
+        System.out.println("清空缓冲区的结果：" + sb);
+    }
+    public static void update() {
+        StringBuffer sb = new StringBuffer("abcdefg");
+        sb.replace(1,5,"qq");
+        System.out.println("修改指定位置的结果：" + sb);
+        sb.setCharAt(2,'p');
+        System.out.println("修改指定位置的结果：" + sb);
+    }
+    public static void query() {
+        StringBuffer sb = new StringBuffer("abcdefg");
+        System.out.println("获取指定位置的字符：" + sb.charAt(2));
+        System.out.println("获取指定字符的索引：" + sb.indexOf("c"));
+        System.out.println("获取指定字符的索引：" + sb.indexOf("c",3));
+        System.out.println("获取指定字符的索引：" + sb.lastIndexOf("c"));
+        System.out.println("获取指定字符的索引：" + sb.lastIndexOf("c",3));
+        System.out.println("获取指定位置到末尾的子串：" + sb.substring(2));
+        System.out.println("获取指定位置到指定位置的子串：" + sb.substring(2,4));
+    }
+}
+
+```
 
 
+###6.2System类与Runtime类
+####6.2.1System类
+####6.2.2Runtime类
 
+###6.3Math类与Random类
+####6.3.1Math类
+####6.3.2Random
 
+###6.4BigInteger类与BigDecimal类
+####6.4.1BigInterger类
+####6.4.2BigDecimal类
 
+###6.5日期和时间类
+####6.5.1Date类
+####6.5.2Calendar类
+####6.5.3Instant类
+####6.5.4LocalDate类
+####6.5.5Local Time类与LocalDateTime类
+####6.5.6Duration类与Period类
 
+###6.6日期与时间格式化类
+####6.6.1DateFormat类
+####6.6.2SimpleDateFormat类
 
+###6.7数字格式化类
+
+###6.8包装类
+
+###6.9正则表达式
+####6.9.1正则表示式和语法
+####6.9.2Pattern类与Matcher
+####6.9.3String类对正则表达式的支持
 
 
 
