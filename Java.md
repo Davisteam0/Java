@@ -3089,10 +3089,217 @@ public class Test6 {
 
 ```
 
+    注意：
+    StringBuffer类
+    除了StringBuffer类,还可以使用StringBuffer类修改字符串,StringBuffer类和StringBuilder类的对象都可以被多次修改,且不产生新的未使用对象。StringBuilder类与StringBuffer类的功能相似,且两个类中提供的方法也基本相同。二者最大的不同在于StringBuffer类的方法是线程安全的,而StringBuilder类没有实现线程安全功能,所以性能略高。通常情况下,如果创建一个内容可变的字符串对象,应该优先考虑使用StringBuilder类。
+
+    StringBuilder类同样提供了一系列添加（append）、插入（insert）、替换（raplace)和删除（delete）的方法。
+
+    String、StringBuffer和StringBuilder都是Java中用于处理字符串的类，它们的主要区别在于它们的可变性、线程安全性和性能。
+
+    1. String是不可变的对象，一旦创建就不能被修改。如果需要对字符串进行修改，就必须创建一个新的String对象。String类适合用于存储少量的字符串，例如变量名、常量等。
+
+    2. StringBuffer是可变的对象，可以通过调用append()方法来追加字符串。StringBuffer是线程安全的，因为它的方法被synchronized关键字修饰，可以在多线程环境中使用。但是，由于同步的开销，StringBuffer的性能比StringBuilder略差。
+
+    3. StringBuilder也是可变的对象，可以通过调用append()方法来追加字符串。StringBuilder不是线程安全的，因此不适合在多线程环境中使用，但是由于没有同步的开销，StringBuilder的性能比StringBuffer更好。
+
+    如果需要在多线程环境中使用字符串，或者需要对字符串进行频繁的修改，应该使用StringBuffer；如果不需要考虑线程安全，且需要高性能的字符串操作，应该使用StringBuilder；如果只是需要存储少量的字符串，可以使用String类。
+
 
 ###6.2System类与Runtime类
+
 ####6.2.1System类
+    System类定义了一些与系统相关的属性和方法,它提供的属性和方法都是静态的,因此,可以使用System类直接引用类中的属性和方法,它提供的属性和方法都是静态的,因此,可以使用System类直接引用类中的属性和方法。
+
+            方法声明                                                    功能描述
+    static void array(Object src,int srcPos,                从源数组src的srcPos位置复制length个元素到目标数组dest的destPos位置
+    Object dest,int destPos,int lenght)
+
+    static void currentTimeMillis()                         返回以毫秒为单位的当前时间
+
+    static Properties getProperties()                       获取当前系统全部属性
+
+    static String getProperty(String key)                   获取指定键描述的系统属性
+
+    static void gc()                                        运行垃圾回收器,并对内存中的垃圾进行回收
+
+    static void exit(int status)                            用于终止当前正在运行的Java虚拟机,其中参数status表示状态码,若状态码非0,则表示异常中止
+
+
+
+1.arraycopy()方法
+
+    arraycopy()方法用于将源数组中的元素复制到目标数组。
+
+    static void arraycopy(object src,int srcPos,Object dest,int destPos,int lenght)
+
+    上述声明中参数含义：
+
+    src:表示数组
+
+    dest:表示目标数组
+
+    srcPos:表示源数组中复制元素的起始位置,即从哪个位置开始复制元素
+
+    destPos:表示复制到目标数组的起始位置,即从哪个位置开始放入复制元素。
+
+    length:表示复制元素的个数
+
+    需要注意的是,在进行数组元素复制时,目标数组必须有足够的空间来存放复制的元素,否则会发生索引越界。
+
+```
+package API;
+
+public class Test {
+    public static void main(String[] args) {
+        int [] fromArray = {10,11,12,13,14,15};
+        int [] toArray = {20,21,22,23,24,25,26};
+        System.arraycopy(fromArray,2,toArray,3,4);
+        //打印复制后数组的元素
+        System.out.println("复制后的数组元素为：");
+        for (int i = 0;i < toArray.length;i++) {
+            System.out.println(toArray[i] + "");
+        }
+    }
+}
+```
+
+    2.currentTimeMillis()方法
+    currentTimeMillis()方法用于获取当前系统的时间,返回值类型是long,该值表示当前时间与1970年1月1日0时0分0秒之间的时间差,单位是秒,通常也将该值称作时间戳(系统当前时间)。
+
+```
+package API;
+
+public class Test1 {
+    public static void main(String[] args) {
+        long startTime = System.currentTimeMillis();
+        int sum = 0;
+        for (int i = 0;i < 1000000000;i++) {
+            sum += i;
+        }
+        long endTime = System.currentTimeMillis();
+        System.out.println("程序运行的时间为：" + (endTime - startTime) + "ms");
+    }
+}
+
+```
+
+3.getProperties()和getProperty()方法
+    System类和getProperties()方法用于获取当前系统的全部属性,该方法会返回一个Priperties对象,该对象封装了系统的所有属性,这些属性以键值对形式存在。getProperty()方法可以根据系统的属性名获取对应的属性值。
+
+```
+package API;
+import java.util.*;
+
+public class Test2 {
+    public static void main(String[] args) {
+        // getProperties()和getProperty()方法
+        //获取当前系统属性
+        Properties properties = System.getProperties();
+        //获取所有系统属性的键,返回Enumeration对象
+        Enumeration propertyNume = properties.propertyNames();
+        while (propertyNume.hasMoreElements()) {
+            //获取系统属性的键
+            String key = (String) propertyNume.nextElement();
+            //获取当前键对值
+            String value = System.getProperty(key);
+            System.out.println(key + "----->" + value);
+        }
+    }
+}
+
+```
+
+注意：
+    java.vm.version:虚拟机版本
+    user.country:用户所在国家
+    os.arch:操作系统架构
+    os.name:操作系统名称
+
+
+4.gc()方法
+    在Java中,一个对象如果不再被任何栈内存引用,该对象就称为垃圾对象。一个对象成为垃圾对象后仍会占用内存空间,时间一长,垃圾对象越来越多,就会导致内存空间不足。针对这种情况,java引入了垃圾回收机制。有了这种机制,程序员不需要过多关心垃圾对象回收的问题,Java虚拟机会自动回收垃圾对象所占用的内存空间。
+    
+    一个对象在成为垃圾对象后,会暂时保留在内存中。当这样的垃圾对象堆积到一定程度时,Java虚拟机就会启动垃圾回收器将这些垃圾对象从内存中释放出来,从而使程序获取更多的可用的空间。除了等待Java虚拟机进行自动回收垃圾外,还可以通过调用System.gc()方法通知Java虚拟机立即进行垃圾回收。在系统回收垃圾对象占用的内存时，会自动调用Object类的finalize()方法,因此可以在类中通过重写finalize()方法观察对象何时被释放。
+
+```
+package API;
+
+class Person {
+    private String name;
+    private int age;
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+    @Override
+    public String toString() {
+        return "姓名:" + this.name + ",年龄:" + this.age;
+    }
+    //下面定义的finalize()方法会在垃圾回收前被调用
+    public void finalize() throws Throwable {
+        System.out.println("对象被释放--->" + this);
+    }
+}
+public class Test3 {
+    public static void main(String[] args) {
+        //创建Person对象
+        Person p = new Person("张三",20);
+        //将变量置为null,让对象p成为垃圾
+        p = null;
+        //调用gc()方法进行垃圾回收
+        System.gc();
+        for(int i = 0;i < 1000000;i++) {
+            //为了延长程序运行的时间,执行空循环
+        }
+    }
+}
+
+```
+
 ####6.2.2Runtime类
+    Runtime类用于封装Java虚拟机进程,通过Runtime类,可以获取Java虚拟机运行时状态。每一个Java虚拟机都应对应一Runtime类的实例。在JDK文档中使用者不会发现任何有关Runtime类构造方法的定义,这是因为RUntime类本身的构造方法是私有化的（单例设计模式）,若想在程序中获取一个Runtime类实例,只能通过调用getRuntime()方法获取,该方法是Runtime类提供的一个静态方法,用于获取Runtime类实例。
+
+    Runtime run = Runtime.getRuntime();
+
+    由于Runtime类封装了Java虚拟机进程,因此,在程序中通常会通过Runtime类的实例对象获取当前Java虚拟机的相关信息。
+
+        方法声明                                                功能描述
+      getRuntime()                                       用于获取Runtime类的实例
+
+      exec(String command)                               用于根据指定的路径执行对应的可执行文件
+
+      freeMemory()                                       用于返回Java虚拟机的空闲内存量,以字节为单位
+
+      maxMemory()                                        用于返回Java虚拟机的最大可用内存量,以字节为单位
+
+      availableProcessors()                              用于返回Java虚拟机的处理器个数
+
+      totalMemory()                                      用于返回Java虚拟机的内存总量,以字节为单位
+
+
+1.获取当前虚拟机信息
+    
+```
+package API;
+
+public class Test4 {
+    public static void main(String[] args) {
+        Runtime rt = Runtime.getRuntime();
+        System.out.println("处理器的个数：" + rt.availableProcessors() + "个");
+        System.out.println("空闲内存量：" + rt.freeMemory() / 1024 / 1024 + "MB");
+        System.out.println("最大可用内存量：" + rt.maxMemory() / 1024 / 1024 + "MB");
+        System.out.println("内存总量：" + rt.totalMemory() / 1024 / 1024 + "MB");
+    }
+}
+
+```
+
+2.操作系统进程
+
+
+
+
 
 ###6.3Math类与Random类
 ####6.3.1Math类
@@ -3119,8 +3326,105 @@ public class Test6 {
 ###6.8包装类
 
 ###6.9正则表达式
+    在项目开发过程中,经常需要对用户输入的信息进行格式校验。例如,判断输入的字符串是否符合Email格式。若手工编写代码实现校验逻辑,不仅耗时,而且程序健壮性也往往得不到保障。为此,Java提供了正则表达式,通过正则表达式可以快速校验信息格式。
 ####6.9.1正则表示式和语法
+    正则表达式是由普通字符（如字符a~z)和特殊字符（元字符）组成的文本模式。例如正则表达式"[a~z]*"描述了所有仅包含小写字母的字符串,其中a,z为普通字符,连字符、左右中括号及星号则为元字符。
+
+    正则表达式中的元字符包括以下几类
+    在Java中，正则表达式中的元字符包括以下内容：
+
+    1. 普通字符：除了元字符以外的所有字符都是普通字符，表示匹配自身。
+
+    2. 转义字符：通过反斜线 \ 转义的字符，如 \d 表示匹配数字字符，\s 表示匹配空白字符。
+
+    3. 字符类：用方括号 [] 包含的字符集合，表示匹配方括号中的任意一个字符。
+
+    4. 限定符：用于指定匹配次数的符号，如 * 表示匹配前一个字符零次或多次，+ 表示匹配前一个字符一次或多次，? 表示匹配前一个字符零次或一次，{n} 表示匹配前一个字符恰好 n 次，{n,} 表示匹配前一个字符至少 n 次，{n,m} 表示匹配前一个字符至少 n 次，最多 m 次。
+
+    5. 分组：用小括号 () 包含的正则表达式，表示匹配括号中的表达式。
+
+    6. 或者：用竖线 | 分隔的多个正则表达式，表示匹配其中任意一个。
+
+    7. 边界匹配符：用于匹配字符串的边界，如 ^ 表示匹配字符串的开头，$ 表示匹配字符串的结尾，\b 表示匹配单词的边界，\B 表示匹配非单词的边界。
+
+    8. 零宽度断言：用于匹配字符的位置而不是字符本身，如 (?=exp) 表示匹配 exp 后面的位置，(?<=exp) 表示匹配 exp 前面的位置，(?!exp) 表示匹配后面不是 exp 的位置，(?<!exp) 表示匹配前面不是 exp 的位置。
+
+    9. 点号 . ：表示匹配除换行符以外的任意一个字符。
+
+    10. 中括号 [] ：用于定义字符集合，表示匹配方括号中的任意一个字符。可以使用连字符 - 表示字符范围，如 [a-z] 表示匹配任意小写字母，[0-9] 表示匹配任意数字。也可以使用脱字符 ^ 表示取反，如 [^a-z] 表示匹配任意非小写字母的字符。
+
+    11. 美元符号 $ ：表示匹配字符串的结尾。
+
+    12. 插入符号 ^ ：在中括号中使用，表示匹配字符串的开头。
+
+
+匹配次数元字符
+    匹配次数元字符用来确定其左侧符号的出现次数。
+
+    常用的匹配次数元字符包括以下内容：
+
+    1. * ：表示匹配前面的字符零次或多次。例如，ab*c 可以匹配 ac、abc、abbc 等字符串。
+
+    2. + ：表示匹配前面的字符一次或多次。例如，ab+c 可以匹配 abc、abbc、abbbc 等字符串。
+
+    3. ? ：表示匹配前面的字符零次或一次。例如，ab?c 可以匹配 ac、abc 两个字符串。
+
+    4. {n} ：表示匹配前面的字符恰好 n 次。例如，a{3} 可以匹配 aaa 字符串。
+
+    5. {n,} ：表示匹配前面的字符至少 n 次。例如，a{3,} 可以匹配 aaa、aaaa、aaaaa 等字符串。
+
+    6. {n,m} ：表示匹配前面的字符至少 n 次，最多 m 次。例如，a{3,5} 可以匹配 aaa、aaaa、aaaaa 三个字符串。
+
+    需要注意的是，以上的匹配次数元字符都是贪婪匹配，即会尽可能地匹配更多的字符。例如，对于表达式 "a.*b"，它会匹配以 a 开头，以 b 结尾，中间包含任意字符的字符串。如果字符串是 "abcdb"，则匹配结果是 "abcdb"，而不是 "ab"。
+
+    如果需要进行非贪婪匹配，可以在匹配次数元字符后面加上 ?，例如，*? 表示非贪婪的零次或多次匹配，+? 表示非贪婪的一次或多次匹配，{n,m}? 表示非贪婪的 n 到 m 次匹配。
+
+其他常用符号
+    除了上述的元字符外,正则表达式的其他常用元字符有：
+
+
+    1. \d ：表示匹配数字字符。等价于 [0-9]。
+
+    2. \D ：表示匹配非数字字符。等价于 [^0-9]。
+
+    3. \s ：表示匹配空白字符，包括空格、制表符、换行符等。等价于 [\f\n\r\t\v]。
+
+    4. \S ：表示匹配非空白字符。等价于 [^\f\n\r\t\v]。
+
+    5. \w ：表示匹配单词字符，包括数字、字母、下划线。等价于 [0-9a-zA-Z_]。
+
+    6. \W ：表示匹配非单词字符。等价于 [^0-9a-zA-Z_]。
+    
+    7. \B ：非单词边界
+
+    8. \A ：输入的开头
+    
+    9. \G ：上一个匹配的结尾 
+
+
 ####6.9.2Pattern类与Matcher
+    Java正则表达式通过Java.util.regex包下的Pattern类与Matcher类实现,因此,要使用正则表达式,首先要学会着两个类的使用
+
+1.pattern类
+    pattern类用于创建一个正则表达式,也可以说创建一个匹配模式。pattern类的构造方法是私有的,不可以直接创建正则表达式,为此,pattern类提供了一个静态的compile()方法,通过compile()方法可以创建一个正则表达式。
+
+    pattern p = pattern.comile("\\w+");
+
+    除了compile()方法,pattern类还提供了其他的方法。
+
+        方法声明                                                            功能描述
+    static Pattern compile(String re)                                   将正则表达式编译为模式
+
+    Matcher matcher(CharSequence input)                                 根据模式为字符串input创建匹配器。String类实现了CharSequence接口,CharSequence接口可视为String
+
+    Static boolean matches(String regex,CharSequence input)             判断字符串input是否匹配正则表达式regex。该方法适用于只进行一次匹配的情况
+
+    String pattern()                                                    返回模式使用的正则表达式
+
+    String[] split(CharSequence input)                                  根据模式将字符串input分割为字符串数组
+
+    String[] spilt(CharSequence input,int limit)                        根据模式将字符串input分割为字符串数组,同时指定字串的最大个数为limit
+
 ####6.9.3String类对正则表达式的支持
 
 
