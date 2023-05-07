@@ -3425,40 +3425,373 @@ public class Test4 {
 
     String[] spilt(CharSequence input,int limit)                        根据模式将字符串input分割为字符串数组,同时指定字串的最大个数为limit
 
+2.Matcher类
+    Matcher类用于验证Pattern类定义的模式与字符串是否匹配,因此Matcher实例也称为匹配器。Matcher类的构造方法也是私有的,不能直接创建Matcher实例,只能通过Pattern.marcher()方法获取该类的实例,多个Matcher对象可以使用同一Pattern对象。
+
+        方法声明                                                功能描述
+    pattern pattern()                                       返回匹配器的模式
+
+    Matcher usePattern(Pattern p)                           使用模式为p的匹配器
+
+    Matcher reset()                                         重设匹配器到初始状态
+
+    Matcher reset(CharSequence input)                       重设匹配器到初始状态,并以input为目标字符串
+    
+    boolean find()                                          在目标字符串中查找下一个匹配字符串,若找到则返回true
+
+    int start()                                             求正则表达式匹配的字符串在整个字符串中第一次出现的索引
+
+    int end()                                               求正则表达式匹配的字符串在整个字符串中最后一次出现的索引
+
+    String group()                                          返回匹配的子串
+
+    String group(init i)                                    返回上一次匹配的子串中与第i组匹配的子串。正则表达式中以一对小括号括起来的部分称为组
+
+
+    boolean matcher()                                       对整个字符串进行匹配,只有整个字符串都匹配才返回true
+
+    boolean lookingAt()                                     从目标字符串的第一个字符开始匹配,若匹配成功则返回true
+
+    String replaceAll(String s)                             将目标字符串中与模式匹配的全部子串替换为s并返回替换后的字符串
+
+    String replaceFirst(String s)                           将目标字符串中与模式匹配的首个子串替换为s并返回替换后的字符串
+
+```
+    package API;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class Test6 {
+    public static void main(String[] args) {
+        Pattern p = Pattern.compile("\\d+");
+        Matcher m = p.matcher("22bb23");
+        System.out.println("字符串是否匹配：" + m.matches());
+        Matcher m2 = p.matcher("2223");
+        System.out.println("字符串2223与模式p是否匹配：" + m2.matches());
+        System.out.println("字符串22bb23与模式p的匹配结果:" + m.lookingAt());
+        Matcher m3 = p.matcher("aa2223");
+        System.out.println("字符串aa2223与模式p的匹配结果:" + m3.lookingAt());
+        System.out.println("字符串22bb23与模式p是否存在下一个匹配结果：" + m.find());
+        m3.find();
+        System.out.println("字符串aa2223与模式p是否存在下一个匹配结果：" + m3.find());
+        Matcher m4 = p.matcher("aabb");
+        System.out.println("字符串aabb与模式p是否存在下一个匹配结果：" + m4.find());
+        Matcher m1 = p.matcher("aaa222bb");
+        m1.find();
+        System.out.println("模式p与字符串aaa222bb第一次匹配的索引：" + m1.start());
+        System.out.println("模式p与字符串aaa2223bb最后一次匹配的索引：" + m1.end());
+        System.out.println("模式p与字符串aaa2223bb匹配的子字符串：" + m1.group());
+        Pattern p2 = Pattern.compile("[/]+");
+        Matcher m5 = p2.matcher("张三/李四//王五///赵六");
+        System.out.println("将字符串张三/李四/王五///赵六中的全部/替换为|：" + m5.replaceAll("|"));
+        System.out.println("将字符串张三/李四/王五///赵六中的首个/替换为|：" + m5.replaceFirst("|"));
+
+    }
+}
+```
+
 ####6.9.3String类对正则表达式的支持
 
+        方法声明                                                功能描述
+    boolean matches(String regex)                           匹配字符串regex
+
+    String replaceAll(String regex,String replacement)      使用字符串replacement替换regex
+
+    String[] split(String regex)                            拆分字符串regex
 
 
+```
+package API;
+
+public class Test7 {
+    public static void main(String[] args) {
+        String str = "A1B22DDS34Dsj9D".replaceAll("\\d + ","_");
+        System.out.println("字符串替换后为:" + str);
+        boolean te = "321123as1".matches("\\d+");
+        System.out.println("字符串是否匹配：" + te);
+        String[] s = "SDS45d4DD4dDS88D".split("\\d+");
+        System.out.println("字符串拆分后为：");
+        for(int i = 0;i<s.length;i++) {
+            System.out.println(s[i] + " ");
+        }
+    }
+}
+```
 
 
+##第七章集合
+###7.1集合概述
+    为了存储不同类型的多个对象,Java提供了一系列特殊的类,这些类可以存储任意类型的对象,并且存储的长度可变,这些类统称为集合。集合可以简单地理解为一个长度可变的,可以存储不同数据类型的动态数组。集合都位于Java。util包中,使用集合时必须导入Java.util包。在学习具体的集合之前,先对集合中的接口和类有所了解。
+
+    集合中的核心接口
+
+        接口                              描述
+    Collection                      集合中最基本的接口,一般不直接使用该接口
+
+    List                            Collection的子接口,用于存储一组有序、不唯一的对象,是集合中常用的接口之一
+
+    Set                             Collection的子接口,用于存储一组无序、唯一的对象
+
+    Map                             用于存储一组键值对象,提供键到值的映射。
 
 
+###7.2Collection接口
+    Collection接口是Java单列集合中的根接口,它定义了各种具体单列集合的共性,其他单列集合大多直接或间接继承该接口。
+
+    public interface Collection<E> extends Iterable<E> {
+        //Query Operations
+    }
+
+    由Collection接口的定义可以看到,Collection是Iterable的子接口,Collection和Iterable后面的<E>表示它们都使用了泛型。Collection接口的常用方法。
+
+        方法声明                                            功能描述
+    boolean add(Object o)                       向当前集合中添加一个元素
+
+    boolean addAll(Collection c)                将指定集合c中的所有元素添加到当前集合中
+
+    void clear()                                删除当前集合中的所有元素
+
+    boolean remove(Object o)                    删除当前集合中的指定的元素
+
+    boolean removeAll(Collection c)             删除当前集合中包含的集合c中的所有元素
+
+    boolean isEmpty()                           判断当前集合是否为空
+
+    boolean contains(Object o)                  判断当前集合中是否包含某个元素
+
+    boolean containsAll(Collection c)           判断当前集合中是否包含指定集合c中的所有元素
+
+    Iterable iterator()                         返回当前集合的迭代器。迭代器用于遍历中的所有元素
+
+    int size()                                  获取当前集合元素个数
+
+    在开发中,往往很少直接使用Collection接口,基本上都是使用其子接口,Collection接口的子接口主要有List、Set、Queue和SortedSet。
+
+###7.3List接口
+####7.3.1List接口简介
+    List接口继承自Collection接口,List接口实例中允许存储重复的元素,所有的元素以线性方式存储。在程序中可以通过索引访问List接口实例中存储的元素。另外,List接口实例中存储的元素是有序的,即元素的存入顺序和取处顺序一致。
+
+        方法声明                                                        功能描述
+    void add(int index,Object element)                      将元素element插入List的索引index处。
+
+    boolean addAll(int index,Collection c)                  将集合c包含的所有元素插入List结合的索引index处
+
+    Object get(int index)                                   返回集合索引index处的元素
+
+    Object remove(int index)                                删除索引index处的元素
+
+    Object set(int index,Object element)                    将索引index处的元素替换成element对象并将替换后的元素返回
+
+    int indexOf(Object o)                                   返回对象o在List中第一次出现的索引
+
+    int lastIndexOf(Object o)                               返回对象o在List中最后一次出现的索引
+
+    List subList(int fromIndex,int toIndex)                 返回从索引fromIndex(包括)到toIndex(不包括)的所有元素组成的子集合
+
+####7.3.2ArrayList
+    ArrayList是List接口的一个实现类,它是程序中最常见的一种集合。ArrayList内部封装了一个长度可变的数组对象,当存入的元素超过数组长度时,ArrayList会在内存中分配一个更大的数组来存储这些元素,因此可以将ArrayList看作一个长度可变的数组。
+
+    ArrayList的大部分方法是从父类Collection和List继承的,其中add()方法和get()方法分别用于实现元素的存入和取出。
 
 
+```
+package API;
+
+import java.util.*;
+
+public class Test8 {
+    public static void main(String[] args) {
+        ArrayList list = new ArrayList();
+        list.add("张三");
+        list.add("李四");
+        list.add("王五");
+        list.add("赵六");
+        //获取集合中元素的个数
+        System.out.println("集合的长度：" + list.size());
+        //取出并打印指定位置的元素
+        System.out.println("第2个元素是:" + list.get(1));
+        //删除索引为3的元素
+        list.remove(3);
+        System.out.println("删除索引为3的元素：" + list);
+        //替换索引为1的元素为李四2
+        list.set(1,"李四2");
+        System.out.println("替换索引为1的元素为李四2：" + list);
+    }
+}
+
+```
+
+    将上述代码输出后可以看到,索引为1的元素是集合中第2个元素,这就说明集合和数组一样,索引的取值范围是从0开始,最后一个索引是集合大小写减1,在访问元素时一定要注意索引不可超出此范围,否则会出现索引越界异常。
+
+    由于ArrayList的底层是使用一个数组存储元素,在增加或删除指定位置的元素时,会擦混关键新的数组,效率比较低,因此Arraylist集合不适合做大量的增删操作,而适合元素的查找。
 
 
+####7.3.3LinkedList
+    LinkedList内部维护了一个双向循环列表,链表中的每一个元素都使用引用的方式记录它的前一个元素和后一个元素,从而可以将所有的元素彼此连接起来。当插入一个新元素时,只需要修改元素之间的引用关系即可,删除一个节点也是如此。正因为LinkedList具有这样的存储结构,所以其增删效率非常高。
+
+        方法声明                                              功能描述
+    void add(int index,E element)                       在当前集合的索引index处插入元素element
+
+    void addFirst(Object o)                             将指定元素o插入当前集合的开头
+
+    void addLast(Object o)                              将指定元素o添加到当前集合的结尾
+
+    Object getFirst()                                   返回当前集合的第一个元素
+
+    Object getLast()                                    返回当前集合的最后一个元素
+
+    Object removeFirst()                                移除并返回当前集合的第一个元素 
+
+    Object remobeLast()                                 移除并返回当前集合的最后一个元素    
+
+    boolean offer(Object o)                             将指定元素o添加到当前集合的结尾
+
+    boolean offerFirst(Object o)                        将指定元素o添加到当前集合的开头
+
+    boolean offerLast(Object o)                         将指定元素o添加到当前集合的结尾
+
+    Object peekFirst()                                  获取当前集合的第一个元素
+
+    Object peekLast()                                   获取当前集合的最后一个元素
+
+    Object pollFirst()                                  移除并返回当前集合的第一个元素
+
+    Object pollLast()                                   移除并返回当前集合的最后一个元素
+
+    void push(Object o)                                 将指定元素o添加到当前集合的开头
 
 
+```
+package API;
+
+import java.util.*;
+public class Test9 {
+    public static void main(String[] args) {
+        LinkedList link = new LinkedList();
+        link.add("张三");
+        link.add("李四");
+        link.add("王五");
+        link.add("赵六");
+        System.out.println(link.toString());
+        link.add(3,"Student");
+        link.addFirst("First");
+        System.out.println(link);
+        System.out.println(link.getFirst());
+        link.remove(3);
+        link.removeFirst();
+        System.out.println(link);
+    }
+}
+
+```
+
+###7.4集合遍历
+
+####7.4.1Iterator接口
+    lterator接口是Java集合框架中的一员,但它与Collection接口和Map接口有所不同,Collection接口和Map接口主要是用于存储元素,而Iterator接口主要用于迭代访问(遍历)集合中的元素,通常情况下Iterator对象也被称为迭代器。
 
 
+```
+package API;
+
+import java.util.*;
+
+public class Test10 {
+    public static void main(String[] args) {
+        ArrayList list = new ArrayList();
+        list.add("张三");
+        list.add("李四");
+        list.add("王五");
+        list.add("赵六");
+        Iterator it = list.iterator();
+        while(it.hasNext()) {
+            Object obj = it.next();
+            System.out.println(obj);
+        }
+    }
+}
+
+```
+
+    Iterator对象在遍历集合时,内部采用指针的方式来跟踪集合中的元素。在调用Iterator的next()方法之前,Iterator的指针位于第一个元素之前,不指向任何元素;第一次调用Iterator的next()方法时,Iterator的指针会向后移动一位,值向第一个元素并将该元素返回;当第二次调用next()方法时,Iterator的指针会指向第二个元素并将该元素返回;以此类推,直到hasNext()方法返回false,表示已经遍历完成,终止遍历。
+
+注意：
+    通过Iterator获取集合中的元素时,这些元素的类型都是Object类型。如果想获取特定类型的元素,则需要对数据类型强制转换。
+
+    并发修改异常：
+        在使用Iterator对集合中的元素进行遍历时,如果调用了集合对象的remove()方法删除元素,然后继续使用Iterator遍历元素,会出现异常。
 
 
+####7.4.2foreach循环
+    虽然Iterator可以用来遍历集合中的元素,但在写法上比较繁琐。为了简化书写,从JDK5开始,JDK提供了foreach循环,它是一种更加简洁的for循环,主要用于遍历数组或者集合中的怨怒是
+
+    for(容器中元素类型 临时变量 : 容器变量) {
+        执行语句
+    }
+
+    由上述foreach循环语句格式可知,与for循环相比,foreach循环不需要获得集合的长度,也不需要根据索引访问集合中的元素,就能自动遍历集合中的元素。
 
 
+```
+package API;
+
+import java.util.*;
+
+public class Test12 {
+    public static void main(String[] args) {
+        ArrayList list = new ArrayList();
+        list.add("张三");
+        list.add("李四");
+        list.add("王五");
+        list.add("赵六");
+        for(Object obj : list) {
+            System.out.println(obj);
+        }
+    }
+}
+
+```
+
+    foreach循环在遍历集合时语法非常简洁,没有循环条件,也没有迭代语句,所有这些工作都交给Java虚拟机执行了。foreach循环的次数是由集合中元素的个数决定的,每次循环时,foreach都通过临时变量将当前循环的元素记住,从而将集合中的元素分别打印出来。
+
+    foreach循环缺陷
+    foreach循环虽然书写起来很简洁,但在使用时也存在一定的局限性。当使用foreach循环遍历集合和数组时,只能访问其中的元素,不能对其中的元素进行修改。
+
+```
+package API;
+
+import java.util.*;
+
+public class Test13 {
+    static String[] strs = {"aaa","bbb","ccc"};
+    public static void main(String[] args) {
+        for(String str : strs) {
+            str = "ddd";
+        }
+        System.out.println("foreach循环修改后的数组：" + strs[0] + "," + strs[1] + "," + strs[2]);
+        for(int i = 0; i < strs.length; i++) {
+            strs[i] = "ddd";
+        }
+        System.out.println("普通for循环修改后的数组：" + strs[0] + "," + strs[1] + "," + strs[2]);
+    }
+}
+
+```
+
+    从上述代码的输出可以看出,foreach循环并不能修改数组中元素的值。其原因是：第6行代码中的str = "ddd"只是将临时变量str赋值为一个新的字符串,这和数组中的元素没有任何关系,而在普通for循环中,可以通过索引的方式引用数组中的元素并修改其值。
 
 
+###7.5Set接口
+####7.5.1Set接口简介
+    Set接口也继承自Collection接口,它的方法与Collection接口的方法基本一致,并没有对Collection接口进行功能上的扩充。与List接口不同的是,Set接口中的元素是无序的,并且都会以某种规则保证存入的元素不出现重复的。
 
+    Set接口常见的实现类有3个,分别是HashSet、LinkedHashSet、TreeSet。其中HashSet根据对象的哈希值确定元素在集合中的存储位置,具有良好的存取和查找性能；LinkedHashSet是链表和哈希表组合的一个数组存储结构；TreeSet则以二叉树的方式存储元素,它可以对集合中的元素进行排序。
 
+####7.5.2HashSet
+    HashSet是Set接口的一个实现类,它存储的元素是不可重复的。当向HashSet中添加一个元素时,首先会先调用HashCode()方法确定元素的存储位置,然后再调用equals方法确保位置没有重复元素。Set接口与List接口存取元素的方式是一样的,但是Set集合中的元素是无序的。
 
-
-
-
-
-
-
-
-
-
+    
 
 
 
