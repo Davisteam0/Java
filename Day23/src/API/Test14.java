@@ -8,7 +8,7 @@ public class Test14 {
         hset.add("张三");
         hset.add("李四");
         hset.add("王五");
-        hset.add("赵六");
+        hset.add("李四");
         Iterator it = hset.iterator();
         while (it.hasNext()) {
             Object obj = it.next();

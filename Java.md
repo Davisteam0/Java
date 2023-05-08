@@ -3791,23 +3791,257 @@ public class Test13 {
 ####7.5.2HashSet
     HashSet是Set接口的一个实现类,它存储的元素是不可重复的。当向HashSet中添加一个元素时,首先会先调用HashCode()方法确定元素的存储位置,然后再调用equals方法确保位置没有重复元素。Set接口与List接口存取元素的方式是一样的,但是Set集合中的元素是无序的。
 
-    
+```
+package API;
+
+import java.util.*;
+
+public class Test14 {
+    public static void main(String[] args) {
+        HashSet hset = new HashSet();
+        hset.add("张三");
+        hset.add("李四");
+        hset.add("王五");
+        hset.add("李四");
+        Iterator it = hset.iterator();
+        while (it.hasNext()) {
+            Object obj = it.next();
+            System.out.println(obj);
+        }
+    }
+}
+
+```
+
+    HashSet之所以能确保不出现重复的元素,是因为它在存入元素时做了很多工作。当调用HashSet的add()方法存入元素时,首先调用hashCode()方法获得该元素的哈希值,然后根据哈希值计算存储位置。如果该位置上没有元素,则直接将元素存入；如果该位置上有元素,则调用equals()方法将要存入的元素和该位置上的元素进行比较,根据返回结果确定是否存入元素。如果返回的结果为false就将该元素存入集合；如果返回的结果为true,则说明有重复元素,就要存入的重复元素舍弃。
+
+    当向集合中存入元素时,为了保证集合正常工作,要求在存入元素时重写Object类中的hashCode()和equals()方法。
+
+```
+# 向集合中存储自定义类对象
+
+package API;
+
+import java.util.*;
+
+class Student {
+    String id;
+    String name;
+    public Student (String id,String name) {
+        this.id = id;
+        this.name = name;
+    }
+    public String toString() {
+        return id + ":" + name;
+    }
+}
+public class Test15 {
+    public static void main(String[] args) {
+        HashSet hs = new HashSet();
+        Student stu1 = new Student("1","张三");
+        Student stu2 = new Student("2","李四");
+        Student stu3 = new Student("2","李四");
+        hs.add(stu1);
+        hs.add(stu2);
+        hs.add(stu3);
+        System.out.println(hs);
+    }
+}
+```
 
 
+```
+该写文件 禁止重复元素出现
+
+package API;
+
+import java.util.*;
+
+class Student {
+    private String id;
+    private String name;
+    public Student (String id,String name) {
+        this.id = id;
+        this.name = name;
+    }
+    //重写toString类
+    public String toString() {
+        return id + ":" +name;
+    }
+    //重写hashCode()类
+    public int hashCode() {
+        return id.hashCode();
+    }
+    //重写equals()
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Student)) {
+            return false;
+        }
+        Student stu = (Student) obj;
+        boolean b = this.id.equals(stu.id);
+        return b;
+    }
+}
+public class Test16 {
+    public static void main(String[] args) {
+        HashSet hs = new HashSet();
+        Student stu1 = new Student("1","张三");
+        Student stu2 = new Student("2","李四");
+        Student stu3 = new Student("2","李四");
+        hs.add(stu1);
+        hs.add(stu2);
+        hs.add(stu3);
+        System.out.println(hs);
+    }
+}
+
+```
+
+####7.5.3LinkedHashSet
+    HashSet存储的元素是无序的,如果想让元素的存取顺序一致,可以使用Java提供的LinkedHashSet类,LinkedHashSet类是HashSet的子类,与LinkedList一样,它也使用双向链表来维护内部元素的关系。
+
+```
+package API;
+
+import java.util.*;
+
+public class Test17 {
+    public static void main(String[] args) {
+        LinkedHashSet set = new LinkedHashSet();
+        set.add("张三");
+        set.add("李四");
+        set.add("王五");
+        Iterator it = set.iterator();
+        while (it.hasNext()) {
+            Object obj = it.next();
+            System.out.println(obj);
+        }
+    }
+}
+
+```
+
+####7.5.4TreeSet
+    TreeSet是Set接口的另一个实现类,它内部采用二叉树存储元素,这样的结构可以保证集合中没有重复的元素,并且可以对元素进行排序。
+
+        方法声明                                功能描述
+    Object first()                          返回集合的第一个元素
+
+    Object last()                           返回集合的最后一个元素    
+
+    Object lower(Object o)                  返回集合中小于给定元素的最大元素,如果没有返回null
+
+    Object floor(Object o)                  返回集合中小与或等于给定元素的最大元素,如果没有返回null
+
+    Object higher(Object o)                 返回集合中大于给定元素的最小元素,如果没有返回null
+
+    Object ceiling(Object o)                返回集合中大于或等于给定元素的最小元素,如果没有返回null
+
+    Object pollFirst()                      移除并返回集合的第一个元素
+
+    Object pollLast()                       移除并返回集合的最后一个元素
 
 
+```
+package API;
+
+import java.util.*;
+
+public class Test18 {
+    public static void main(String[] args) {
+        //创建集合
+        TreeSet ts = new TreeSet();
+        //向集合中添加元素
+        ts.add(3);
+        ts.add(29);
+        ts.add(90);
+        ts.add(60);
+        ts.add(25);
+        System.out.println("创建的TreeSet集合为：" + ts);
+        //获取首尾元素
+        System.out.println("TreeSet集合首元素为：" + ts.first());
+        System.out.println("TreeSet集合尾部元素为：" + ts.last());
+        //比较并获取元素
+        System.out.println("集合中小于或等于9的最大的元素为：" + ts.floor(9));
+        System.out.println("集合中大于10的最小的元素为：" + ts.higher(10));
+        System.out.println("集合中大于100的最小的元素为：" + ts.higher(100));
+        //删除元素
+        Object first  = ts.pollFirst();
+        System.out.println("删除的第一个元素为：" + first);
+        System.out.println("删除第一个元素后TreeSet集合变成：" + ts);
+    }
+}
+
+```
+
+    使用TreeSet的方法正确完成了集合元素的操作。另外,从输出结果也可以看出,向TreeSet集合添加元素时,不论元素的添加顺序如何,这些元素都能够按照一定的顺序排列。其原因是：每次向TreeSet集合中存入一个元素时,就会在进行比较时都会调用compareTo()方法,该方法是在Compareble接口中定义的,因此要想对集合中的元素进行排序,就必须实现Comparable接口。Java中大部分的类实现了Comparable接口,并默认实现了该接口中的ComparableTo()方法,如Integer、Double和String。
+
+    在实际开发中,除了会向TreeSet集合中存储一些Java默认类型的数据外,还会存储一些用户自定义的类型的数据,如Student类型的数据、Teacher类型的数据等。由于这些自定义类型的数据没有实现Comparable接口,因此也就无法直接在TreeSet集合中进行排序操作。为了解决这个问题,Java提供了两种TreeSet集合的排序规则,分别为自然排序和自定义排序。在默认情况下,TreeSet都采用自然排序。
+
+    1.自然排序
+        自然排序要求向TreeSet集合中存储的元素所在类必须实现Comarable接口,并重写compareTo()方法,然后TreeSet集合就会对该类型的元素使用compareTo()方法进行比较。compareTo()方法将当前对象与指定的对象按顺序进行比较,返回值为一个整数,其中,返回负整数、零或正整数分别表示当前对象小于、等于或大于指定对,默认根据比较结果顺序排序。
+
+```
+
+```
+
+    2.自定义排序
+    有时如果不想实现Comparable接口或者不想按照实现了comparable接口的类中compareTo()方法的规则进行排序,可以通过自定义比较器的方式对TreeSet集合中的元素自定义排序规则。实现comparable接口的类都是一个自定义比较器,可以在自定义比较器的compare()方法中自定义排序规则。
+
+    在TreeSet集合中自定义排序。排序规则是：先根据Student的id升序排列；如果id相同,则根据name进行升序排列。
 
 
+```
+package API;
 
+import java.util.Comparator;
+import java.util.TreeSet;
 
+class Student {
+    private String id;
+    private String name;
+    public Student (String id,String name) {
+        this.id = id;
+        this.name = name;
+    }
+    public String getId() {
+        return id;
+    }
+    public String getName() {
+        return name;
+    }
+    //重写toString()方法
+    public String toString() {
+        return id + ":" + name;
+    }
+}
+public class Test20 {
+    public static void main(String[] args) {
+        TreeSet ts = new TreeSet(new Comparator() {
+            @Override
+            public int compare(Object o1, Object o2) {      //重写
+                Student stu1 = (Student) o1;
+                Student stu2 = (Student) o2;
+                if(! stu1.getId().equals(stu2.getId())) {
+                    return stu1.getId().compareTo(stu2.getId());
+                }
+                else {
+                    return stu1.getName().compareTo(stu2.getName());
+            }
+        }
+    });
+        ts.add(new Student("2","Mary"));
+        ts.add(new Student("1","Jack"));
+        ts.add(new Student("3","Lisa"));
+        ts.add(new Student("2","Lily"));
+        System.out.println(ts);
+    }
+}
 
-
-
-
-
-
-
-
+```
 
 
 
