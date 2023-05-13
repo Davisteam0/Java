@@ -4043,44 +4043,523 @@ public class Test20 {
 
 ```
 
+###7.6Map接口
+    数学中的函数描述了自变量到因变量的映射。Map接口借鉴了数学中函数的思想————Map接口中的每个元素都是由键到值的映射,即Map接口中的每个元素都由一个键值对组成。
+
+####7.6.1Map接口简介
+    Map接口是一种双列集合,它的每个元素都包含一个键对象Key和一个值对象Value,键和值之间存在一种对应的关系,称为映射。Map中的键不允许重复,访问Map集合中的元素时,只要制定了键,就能找到对应的值。
+
+        方法声明                                                功能描述
+    void put(Object key,Object value)                    将指定的值和键存入合并进行映射关联
+
+    Object get(Object key)                               返回指定的键映射的值；如果此映射不包含该键的映射关系则返回null
+
+    void clear()                                         移除所有的键值对元素
+
+    V remove(Object key)                                 根据键删除对应的值,返回被删除的值
+
+    int size()                                           返回集合中键值对的个数
+
+    boolean contains Value(Object value)                 如果此映射包含指定键的映射关系,则返回true
+
+    Set keySet()                                         如果此映射将一个或多个键映射到指定值,则返回true
+
+    Collection<V> values()                               返回此映射中包含的值的Collection集合
+
+    Set<Map.Entry<K,V>>entrySet()                        返回此映射中包含的映射关系的Set集合
 
 
+####7.6.2HashMap
+    HashMap是Map接口的一个实现类,HashMap中的大部分方法都是Map接口方法的实现。在开发中通常把HashMap集合对象的引用赋值给Map接口变量,接口变量就可以调用HashMap类实现的接口方法。HashMap集合用于存储键值映射关系,但HashMap集合没有重复的键并且元素无序。
+
+```
+import java.util.*;
+public class Test2 {
+    public static void main(String[] args) {
+        Map map = new HashMap();
+        map.put("1","张三");
+        map.put("2","李四");
+        map.put("3","王五");
+        System.out.println("1:" + map.get("1"));
+        System.out.println("2:" + map.get("2"));
+        System.out.println("3:" + map.get("3"));
+    }
+}
+
+```
 
 
+    在上述代码的基础上添加一行代码,会发现第二次添加的“赵六”覆盖了原来的值“王五”。这证实了HashMap集合中的键必须是唯一的,不能重复,如果存储了相同的键,后存储的值则会覆盖原有的值。即：键相同,值覆盖。
+
+    在程序开发中,取出HashMap集合中所有的键和值时有两种方式。第一种方式就是先遍历HashMap集合中所有的键,再根据键获取对应的值。
+
+```
+import java.util.*;
+
+public class Test3 {
+    public static void main(String[] args) {
+        Map map = new HashMap();
+        map.put("1","张三");
+        map.put("2","李四");
+        map.put("3","王五");
+        Set keySet = map.keySet();
+        Iterator it = keySet.iterator();
+        while (it.hasNext()) {
+            Object key = it.next();
+            Object value = map.get(key);
+            System.out.println(key + ":" + value);
+        }
+    }
+}
+
+```
+
+    HashMap集合的第二种遍历方式是：先获取集合中所有的映射关系,然后从映射关系中取出键和值。
+
+```
+import java.util.*;
+
+public class Test4 {
+    public static void main(String[] args) {
+        Map map = new HashMap();
+        map.put("1","张三");
+        map.put("2","李四");
+        map.put("3","王五");
+        Set entrySet = map.entrySet();
+        Iterator it = entrySet.iterator();
+        while (it.hasNext()) {
+            Map.Entry entry = (Map.Entry) (it.next());
+            Object key = entry.getKey();
+            Object value = entry.getValue();
+            System.out.println(key + ":" + value);
+        }
+    }
+}
+
+```
+
+    HahsMap还提供了一些操作集合的常用的方法。values()方法用于获取集合中所有的值,返回值类型为Collection；size()方法用于获取集合的大小；containsKey()方法用于判断是否包含传入的键；containsValue()方法用于判断是否包含传入的值,remove()方法用于根据key移除集合中的与该键对应的值。
+
+```
+import java.util.*;
+public class Test5 {
+    public static void main(String[] args) {
+        Map map = new HashMap();
+        map.put("1","张三");
+        map.put("2","李四");
+        map.put("3","王五");
+        map.put("4","赵六");
+        System.out.println("集合大小为：" + map.size());
+        System.out.println("判断是否包含传入的键(2):" + map.containsKey("2"));
+        System.out.println("判断是否包含传入的值(王五):" + map.containsValue("王五"));
+        Collection values = map.values();
+        Iterator it = values.iterator();
+        while (it.hasNext()) {
+            Object value = it.next();
+            System.out.println(value);
+        }
+    }
+}
+
+```
+
+####7.6.3LinkedHashMap
+    HashMap集合遍历元素的顺序和存入的顺序是不一致的。如果想让集合中的元素遍历顺序与存入顺序一致,可以使用LinkedHashMap集合。LinkedHashMap是HashMap的子类。与LinkedList一样,LinkedHashMap集合也使用双向链表维护内部元素的关系,使集合元素遍历顺序与存入顺序一致。
+
+```
+import java.util.*;
+
+public class Test6 {
+    public static void main(String[] args) {
+        Map map = new LinkedHashMap();
+        map.put("3","李四");
+        map.put("2","王五");
+        map.put("4","赵六");
+        Set keySet = map.keySet();
+        Iterator it = keySet.iterator();
+        while (it.hasNext()) {
+            Object key = it.next();
+            Object value = map.get(key);
+            System.out.println(key + ":" + value);
+        }
+    }
+}
+```
 
 
+####7.6.4TreeMap
+    HashMap集合存储的数据的元素的键是无序的和不可重复的,为了对集合中的元素的键进行排序,Map接口还提供了一个可以对集合中元素的键进行排序的实现类
+
+```
+import java.util.*;
+import java.util.Iterator;
+import java.util.TreeMap;
+
+public class Test7 {
+    public static void main(String[] args) {
+        Map map = new TreeMap();
+        map.put(3,"李四");
+        map.put(2,"王五");
+        map.put(4,"赵六");
+        map.put(3,"张三");
+        Set keySet = map.keySet();
+        Iterator it = keySet.iterator();
+        while(it.hasNext()) {
+            Object key = it.next();
+            Object value = map.get(key);
+            System.out.println(key+ ":" + value);
+        }
+    }
+}
+
+```
 
 
+    TreeMap集合之所以可以对添加的元素的键进行排序,其实同TreeSet一样,TreeMap集合的排序也分自然排序与自定义排序两种。
+
+```
+import java.util.*;
+class Student {
+    private String name;
+    private int age;
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public int getAge() {
+        return age;
+    }
+    public void setAge(int age) {
+        this.age = age;
+    }
+    public Student(String name,int age) {
+        super();
+        this.name = name;
+        this.age = age;
+    }
+    @Override
+    public String toString() {
+        return "Student [name = "+ name + ",age =" + age + "]";
+    }
+}
+public class Test8 {
+    public static void main(String[] args) {
+        TreeMap tm = new TreeMap(new Comparator<Student>() {
+            @Override
+            public int compare(Student s1, Student s2) {
+                int num = s1.getName().compareTo(s2.getName());
+                return num == 0 ? num:s1.getAge() - s2.getAge();
+            }
+        });
+        tm.put(new Student("张三",23),"北京");
+        tm.put(new Student("李四",13),"上海");
+        tm.put(new Student("王五",43),"深圳");
+        tm.put(new Student("赵六",33),"广州");
+        Set keySet = tm.keySet();
+        Iterator it = keySet.iterator();
+        while(it.hasNext()) {
+            Object key = it.next();
+            Object value = tm.get(key);
+            System.out.println(key + ":" + value);
+        }
+    }
+}
+
+```
 
 
+####7.6.5Properties
+    Map接口还有一个实现类————HashTable,它和HashMap十分相似,区别在于HashTable类是线程安全的。HashTable类存取元素时速度很慢,目前基本上被HashMap类所取代。但HashTable类有一个很重要的子类————Properties,应用广泛。
+
+    Properties主要用于存储字符串类型的键和值。在实际开发中,经常使用Properties集合存储应用的配置项。假设有一个文本编辑工具,要求默认背景色是红色,字体大小为14px,语言为中文：
+
+    Backgroup-color = red
+    Font-size = 14px
+    Language = chinese
+
+```
+import java.util.*;
+
+public class Test9 {
+    public static void main(String[] args) {
+        Properties p = new Properties();
+        p.setProperty("Backgroup-color","red");
+        p.setProperty("Font-size","14px");
+        p.setProperty("Language","chinese");
+        Enumeration names = p.propertyNames();
+        while(names.hasMoreElements()) {
+            String key = (String) names.nextElement();
+            String value = p.getProperty(key);
+            System.out.println(key + "=" + value);
+        }
+    }
+}
+
+```
+
+    针对字符串的存取提供了两个专用的方法————setProperty()和getProperty()方法用于将配置项的键和值添加到Properties集合当中。在第8行代码中通过调用PropertyNames()方法得到一个包含所有键的Enumeration对象,然后在遍历所有的键时,通过getProperty()方法获得键对应的值
 
 
+###7.7常用工具类
+    Java集合提供了两个常用的容器工具类————Collection和Arrays,这两个类提供了很多静态方法,通过调用这些静态方法完成上述操作。
+
+####7.7.1Collection工具类
+    Collections工具类位于Java.util包中,它提供了大量的静态方法用于对集合中的元素进行排序、查找和修改等操作。
+
+    1.添加、排序操作
+    Collections类提供了一系列方法用于对List集合进行添加和排序操作
+
+        方法声明                                                                        功能描述
+    static <T> boolean addAll(Collection) <?super T>c,T……element)               将所有指定元素添加到指定集合c中。T……element代表可变参数
+
+    static void reverse(List list)                                              发转指定List集合中元素的顺序
+
+    static void shuffle(List list)                                              随机打乱List集合中元素的顺序
+
+    static void sort(List list)                                                 根据元素的自然顺序（从小到大）对List集合中的元素进行排序
+
+    static void swap(List list,int i,int j)                                     将指定List集合中索引为i的元素和索引为j的元素交换
 
 
+```
+import java.util.*;
+
+public class Test10 {
+    public static void main(String[] args) {
+        ArrayList<String> list = new ArrayList<>();
+        Collections.addAll(list,"C","Z","B","K");
+        System.out.println("排序前：" + list);
+        Collections.reverse(list);
+        System.out.println("反转后：" + list);
+        Collections.sort(list);
+        System.out.println("按自然顺序排序后：" + list);
+        Collections.shuffle(list);
+        System.out.println("按随即顺序排序后：" + list);
+        Collections.swap(list,0,list.size()-1);
+        System.out.println("集合首位元素交换后：" + list);
+    }
+}
+
+```
+
+2.查找、替换操作
+    Collections类还提供了一些常用方法用于对Set集合、List集合和Map集合等进行查找和替换操作。
+
+        方法声明                                                        功能描述
+    static int binarySearch(List list,Object key)                   使用二分法搜索指定对象在List集合中的索引,要求查找的List集合中的元素必须是有序的。
+
+    static Object max(Collection col)                               根据元素的自然顺序,返回给定集合中最大的元素
+
+    static Object min(Collection col)                               根据元素的自然顺序,返回给定集合中最小的元素
+
+    static boolean replaceAll(List list,Object oldVal,Object new Val)       用新值（newVal)替换List集合中所有的旧值（oldVal）
 
 
+```
+import java.util.*;
+
+public class Test11 {
+    public static void main(String[] args) {
+        ArrayList<Integer> list = new ArrayList<>();
+        Collections.addAll(list,-3,2,9,5,8);
+        System.out.println("集合中的元素：" + list);
+        System.out.println("集合中的最大元素：" + Collections.max(list));
+        System.out.println("集合中最小元素：" + Collections.min(list));
+        Collections.replaceAll(list,8,0);
+        System.out.println("替换后的集合：" + list);
+        Collections.sort(list);
+        System.out.println("集合排序后为：" + list);
+        int index = Collections.binarySearch(list,0);
+        System.out.println("集合通过二分查找元素9所在的索引为：" + index);
+    }
+}
+
+```
 
 
+####7.7.2Arrays工具类
+    在java.util包中,除了针对集合操作提供了集合工具类Collections以外,还针对数组操作提供了数组工具类Arrays。Arrays工具类提供了大量针对数组操作的静态方法。
+
+1.使用sort()方法排序
+    要对数组进行排序,就需要自定义一个排序方法。此外,也可以调用Arrays工具类中的静态方法sort()实现数组排序。
+
+```
+import java.util.Arrays;
+
+public class Test12 {
+    public static void main(String[] args) {
+        int [] arr = {9,8,3,5,2};
+        System.out.println("排序前：");
+        printArray(arr);
+        Arrays.sort(arr);
+        System.out.println("排序后：");
+        printArray(arr);
+    }
+    //定义打印数组元素方法
+        public  static void printArray(int [] arr) {
+        System.out.println("[");
+        for (int x = 0;x < arr.length; x++) {
+            if (x != arr.length - 1) {
+                System.out.println(arr[x] + ",");
+            } else {
+                System.out.println(arr[x] + "]");
+            }
+        }
+    }
+}
+
+```
 
 
+    上述代码输出可知,使用Arrays的sort()方法时会按照自然顺序对数组元素从小到大排序,使用非常方便。针对数组排序,数组工具类Arrays还提供了多个重载的sort()方法,既可以按照自然顺序排序,也可以通过传入比较器参数按照自定义规则排序,同时还支持选择排序的元素范围。
+
+2.使用binarySearch()方法查找元素
+    在程序开发过程中,经常会在数组中查找某些特定的元素。如果数组中元素较多,查找某个元素时效率会非常低。为此,Arrays工具类提供了binarySearch()方法用于查找元素。
+    方法声明格式：
+        binarySeacher(Object [] a,Object key);
 
 
+    在上述语法中,参数a是被查询的集合,参数key是被查询的元素值。bianrySeacher()方法只能针对有序数组进行元素查找,因为该方法采用的是二分查找。所谓二分查找就是每次将指定元素和数组中间位置的元素比较,从而排除其中的一半元素,这样的查找是非常高效的。
 
 
+    好的，下面是一个二分查找的过程，假设我们要查找的数是5，数组是[1, 3, 4, 5, 7, 9]。
+
+    1. 首先，确定数组的中间位置，即3。因为5大于3，所以我们可以排除数组的前一半，即[1, 3, 4]。
+
+    2. 接下来，我们再在剩下的数组[5, 7, 9]中查找。确定中间位置，即7。因为5小于7，所以我们可以排除数组的后一半，即[7, 9]。
+
+    3. 再次确定中间位置，即5。因为5正好等于要查找的数，所以查找成功，返回该数的索引值，即3。
+
+下面是一个二分查找的伪代码：
+
+```
+function binarySearch(arr, target) {
+    let left = 0
+    let right = arr.length - 1
+
+    while (left <= right) {
+        let mid = Math.floor((left + right) / 2)
+
+        if (arr[mid] === target) {
+            return mid
+        } else if (arr[mid] < target) {
+            left = mid + 1
+        } else {
+            right = mid - 1
+        }
+    }
+
+    return -1 // 没有找到目标数
+}
+```
+
+    在这个伪代码中，我们首先定义了一个左指针和右指针，它们分别指向数组的第一个元素和最后一个元素。然后，我们进入一个循环，只要左指针小于等于右指针，就继续查找。
+
+    在每一次循环中，我们计算出中间位置，并判断该位置的值和目标数的大小关系。如果中间位置的值等于目标数，就返回该位置的索引值。如果中间位置的值小于目标数，就将左指针移到中间位置的右侧；否则，就将右指针移到中间位置的左侧。
+
+    如果循环结束后仍然没有找到目标数，就返回-1，表示没有找到。
 
 
+```
+import java.util.Arrays;
+
+public class Test11 {
+    public static void main(String[] args) {
+        int [] arr = {9,8,3,5,2};
+        Arrays.sort(arr);
+        int index = Arrays.binarySearch(arr,3);
+        System.out.println("元素3的索引是：" + index);
+    }
+}
+```
+
+3.使用copyOfRange()方法复制元素
+    在程序开发中,经常需要在不破坏原数组的情况下使用新数组中的部分元素,z这时可以使用Arrays工具类的copyOfRange()方法,该方法可以将数组中指定范围的元素复制到一个新的数组中。
+        copyOfRange()方法声明：
+
+            copyOfRange(int [] original,int from,int to);
+
+    在上述语法中,参数original表示被复制的数组,from表示被复制元素的开始索引(包括),to表示被复制元素结束索引(不包括)。
 
 
+```
+import java.util.Arrays;
+public class Test13 {
+    public static void main(String[] args) {
+        int [] arr = {9,8,5,3,2};
+        //复制一个指定范围的数组
+        int [] copied = Arrays.copyOfRange(arr,1,7);
+        for(int i = 0;i < arr.length;i++) {
+            System.out.println(copied[i] + "");
+        }
+    }
+}
+
+```
 
 
+4.使用fill()方法替换元素
+    在程序开发中,有时需要将一个数组中的所有元素替换成同一个元素,此时可以使用Arrays工具类的fill()方法,该方法可以将指定的值赋给数组中的每一个元素。
+
+    fill(Object [] a,Object val)
+
+    参数a表示要替换元素的数组,val表示用于替换元素的新值。
+
+```
+import java.util.Arrays;
+public class Test14 {
+    public static void main(String[] args) {
+        int [] arr = {1,2,3,4,5,6,7,8};
+        Arrays.fill(arr,6);
+        for(int i = 0;i < arr.length;i++) {
+            System.out.println(i + ":" + arr[i]);
+        }
+    }
+}
+
+```
 
 
+###7.8Lambda表达式
+    Lambda表达式可以取代大部分匿名内部类,写出更优雅的Java代码,尤其在集合的遍历和其他集合操作中,可以极大地优化代码结构。
 
+    Lambda表达式由参数列表、箭头符号（- >)和方法体组成。方法体既可以是一个表达式,也可以是一个语句块。其中,表达式会被执行,然后返回执行结果；语句块中的语句会被依次执行,就像方法中的语句一样。
 
+            语法格式                                                描述
+    () -> System.out.println("Hello Lambda!")                   无参数,无返回值
 
+    (x) -> System.out.println(x)                                有一个参数,无返回值
 
+    x -> System.out.println(x)                                  若只有一个参数,小括号可以省略不写
 
+    Comparator <Integer> com = (x,y) -> {                       有两个以上的参数,有返回值,并且Lambda方法体中有多条语句
+        System.out.println("函数接口")
+        return Integer.compare(x,y);};
 
+     Comparator <Integer> com = (x,y) ->                        若Lambda方法体中只有一条语句,return和大括号都可以省略不写
+      Integer.compare(x,y);  
+
+    （Integer x,Integer y) -> Integer.compare(x,y);             Lambda表达式的参数列表的数据类型可以省略不写,因为Java虚拟机的编译器可可以通上下文推断出数据结构,即“类型推断”
+
+```
+import java.util.Arrays;
+public class Test15 {
+    public static void main(String[] args) {
+        String [] arr = {"program","creek","is","a","java","site"};
+        System.out.println("Lambda语句体中只有一条语句,参数类型可推断：" + Arrays.toString(arr));
+        Arrays.sort(arr,(String m,String n) -> {
+            if (m.length() > n.length())
+                return -1;
+            else
+                return 0;
+        });
+        System.out.println("Lambda语句体中有多条语句：" + Arrays.toString(arr));
+    }
+}
+
+```
 
 
 
