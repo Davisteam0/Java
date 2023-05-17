@@ -4561,18 +4561,367 @@ public class Test15 {
 
 ```
 
+##第8章泛型
+
+###8.1泛型基础
+
+####8.1.1泛型概述
+    泛型是在JDK5只中引入的一个新特性,其本质是参数化类型,也就是将具体的类型形参化。参数化的类型（可以称之为形参类型）在使用或者调用时传入具体的类型（类型实参）,类似于调用方法时传入实参才能确定形参的具体值。泛型的声明由一对尖括号和类型形参组成,类型形参定义在尖括号中,定义类、接口和方法时使用泛型声明,这样定义的类、接口和方法分别称为泛型类、泛型接口和泛型方法。
+
+
+```
+// 未使用泛型文件
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Test1 {
+    public static void main(String[] args) {
+    // 创建一个只保存Integer类型的List集合
+        List intList = new ArrayList();
+        intList.add(1);
+        intList.add(2);
+        //因为失误存放了非字符串数据
+        intList.add("3");
+        for (int i = 0;i < intList.size(); i++) {
+            /*
+                因为List集合默认取出的全部Object对象,所以使用之前需要进行强制类型转换
+                集合内最后一个元素进行转换时将出现类型转换异常
+             */
+            Integer num = (Integer) intList.get(i);
+        }
+    }
+}
+
+```
+
+    在上列文件中,第4行代码只创建了一个只保存Integer类型的List集合。第5~8行代码向集合中存放数据,由于存放数据时并没有出现编译异常,操作者认为存入的数据类型都符合要求,但是在执行最后一行代码后会出现异常。
+
+    解决上列问题,可以自定义一个类,重写集合中的add()方法和get()方法。
+
+```
+import java.util.ArrayList;
+
+//定义一个只存放Integer类型的类
+class IntList {
+    prvate List intList = new ArrayList();
+    //添加元素的方法
+    public boolean add(Integer e) {
+        return intList.add(e);
+    }
+    //获取元素个数的方法
+    public int size() {
+        return intList.size();
+    }
+}
+public class Test2 {
+    public static void main(String[] args) {
+        //创建一个保存字符串的Integer集合
+        IntList integer = new IntList();
+        intList.add(1);
+        intList.add(2);
+        //存放Integer类型之外的数据,将出现编译时异常
+        intList.add("E");
+        for (int i = 0; i < intList.size(); i++) {
+            /*
+                由于限制了存入intList中的数据类型,并且重写了get方法(),
+                此时获取intList中的元素不用进行强制类型转换
+             */
+            Integer num = intList.get();
+        }
+    }
+}
+
+```
+
+
+```
+import java.util.ArrayList;
+import java.util.List;
+
+public class Test3 {
+    public static void main(String[] args) {
+        //创建一个只保存Integer类型的List集合
+        List<Integer>intList = new ArrayList<Integer>();
+        intList.add(1);
+        intList.add(2);
+        //下面的代码无须进行类型转换
+        Integer num = new intList.get(i);
+
+    }
+}
+
+```
+
+
+####8.1.2使用泛型的好处
+    1）提高类型的安全性
+    2）消除强制类型转换
+    3）提高代码复用性
+    4）拥有更高的运行效率
+
+###8.2泛型类
+    定义类时,在类名后加上尖括号括起来类型形参,这个类就是泛型类。创建泛型类的实例对象时传入不同的类型实参,就可以动态生成任意多个该泛型类的子类。
+
+    定义泛型类的格式；
+
+        [访问权限] class 类名 <类型形参变量1，类型形参变量2,……,类型形参变量n> {
+            ……
+        }
+
+
+    上述语法格式中,类名<类型形参变量>是一个整体的数据类型,通常称为泛型类型；类型形参变量没有特定的意义,可以是任意一个字母,但是为了提高可读性,建议使用有意义的字母。
+
+    E：表示ELement（元素）,常用在Java Collection中,如List<E>,Iterator<E>、Set<E>。
+
+    K,V：表示Key和Value(Map的键值对)
+
+    N：表示Number(数字)
+
+    T：表示Type(类型),如String、Integer。
+
+    定义泛型类时,类的构造方法名称还是类的名称。类型形参变量可以用于属性的类型、方法的返回值类型和方法的参数类型。
+
+    创建泛型类的对象时,不强制要求传入类型实参。如果传入类型实参,类型形参会根据传入的类型实参做相应的限制,此时泛型才会起到应有的限制作用；如果不传入类型实参,在泛型类中使用类型形参的方法或成员变量定义的类型可以为任何类型。
+
+```
+//定义泛型类Goods
+class Goods<T> {
+    //类型形参变量作用于属性的类型
+    private T info;
+    //类型形参变量作用于构造方法的参数类型
+    public Goods(T info) {
+        this.info = info;
+    }
+    //类型形参变量作用于方法的参数类型
+    public void setInfo(T info) {
+        this.info = info;
+    }
+    //类型形参变量作用于方法的返回值类型
+    public T getInfo() {
+        return this.info;
+    }
+}
+public class Test4 {
+    public static void main(String[] args) {
+        //创建Goods对象
+        Goods goods = new Goods<Integer>(666);
+        System.out.println(goods.getInfo() + "..." + goods.getInfo().getClass());
+        goods.setInfo("热卖商品");
+        System.out.println(goods.getInfo() + "..." + goods.getInfo().getClass());
+    }
+}
+
+```
+
+###8.3泛型接口
+    定义泛型接口和定义泛型类的语法格式类似,在接口名称后面加上用尖括号括起来的型形参即可。与集合相关的很多接口也是泛型接口,如Collection、List。定义泛型接口的基本语法格式：
+
+    [访问权限] interface 接口名称<类型形参变量>{}
+
+
+1.使用非泛型类实现泛型接口
+    当使用非泛型类实现接口时,需要明确接口的泛型类型,也就是需要将类型实参传入接口。此时实现类重写接口中使用泛型的地方,都需要将类型形参替换成传入的类型实参,这样就可以直接使用泛型接口的类型实参。
+
+
+    //定义一个泛型接口
+    interface Info<T> {
+        public T getVar;
+    }
+
+
+    //明确接口的泛型类型
+    public class InterImpl implements Inter<String> {
+        @Override
+        public void show (String s) {
+            System.out.println(s);
+        }
+    }
+
+
+    在接口后面传入的类型实参类型为String。这样,在InterImpl实现类中重写Inter接口中的show()方法时,就需要指明show()方法的参数类型为String。
+
+    定义好泛型接口和泛型接口的实现类后,对泛型接口及泛型接口实现类的使用进行测试,此时创建Inter对象时传入的类型实参必须是String类型,否则会出现编译时异常
+
+    public class Test5 {
+    public static void main(String[] args) {
+        Inter<String> inter = new InterImpl();
+        inter.show("hello");
+    }
+}
+
+
+2.使用泛型类型实现泛型接口
+    当使用泛型类实现泛型接口时,需要将泛型的声明加在实现类中,并且泛型类和泛型接口使用的必须是同一个类型形参变量,否则会出现编译异常。
+
+    public class InterImpl<T>implements Inter<T> {
+        @Override
+        public void show(T t) {
+            System.out.println(t);
+        }
+    }
+
+
+    重新编辑文件,在main方法中创建inter对象时传入不同的类型实参,并分别调用show()方法进行输出验证。
+
+    public class Test6 {
+        public static void main(String[] args) {
+            Inter<String> inter = new InterImpl();
+            inter.show("hello");
+            Inter<Inter> ii = new InterImpl();
+            ii.show(12);
+        }
+    }
 
 
 
+###8.4泛型方法
+####8.4.1泛型方法概述
+    泛型方法是将类型形参的声明放在修饰符和返回值类型之间的方法。
+
+    [访问权限修饰符] [static] [final] <类型形参> 返回值类型 方法名 (形参列表) {}
+
+    定义泛型方法时,需要注意：
+    1）访问权限修饰符(包括private、public、protected)、static和final都必须写在类型形参的前面。
+    2）返回值类型必须卸载类型形参的后面
+    3）泛型方法可以在用泛型类中,也可以用在普通类中
+    4）泛型类中的任何方法本质上都是泛型方法,所以在实际使用中很少会在泛型类中用上面的形式定义泛型方法
+    5）类型形参可以用在方法体中修饰局部变量,也可以修饰方法的返回值
+    6）泛型方法可以是实例方法(没有用static修饰,也叫非静态方法),也可以是静态方法。
+
+####8.4.2泛型方法的应用
+
+    泛型方法通用的有两种方式:
+
+        对象名 | 类名.<类型实参>方法名(实参列表);
+
+        对象名 | 类名.方法名(类型实参列表);
+
+    如果泛型方法是实例方法,则需要使用对象名进行调用；如果泛型方法是静态方法,可以使用类名进行调用。可以看出,上述两种调用泛型方法的形式的差别在于方法名之前是否显示地指定类型实参。调用时是否需要显示地指定了类型实参,要根据泛型方法的声明形式以及调用时编译器能否从实参列表中获得足够的类型信息决定。如果编译器能够根据实参推断出参数类型,就可以不指定类型实参；反之则需要指定类型实参。
+
+```
+class Student {
+    //静态泛型方法
+    public static <T> void staticMethod(T t) {
+        System.out.println(t + "..." + t.getClass().getName());
+    }
+    //泛型方法
+    public <T> void otherMethod(T t) {
+        System.out.println(t + "..." + t.getClass());
+    }
+}
+public class Test8 {
+    public static void main(String[] args) {
+        //使用形式一调用静态泛型方法
+        Student.staticMethod("staticMethod");
+        //使用形式二调用静态泛型方法
+        Student.<String>staticMethod("StaticMethod");
+        Student stu = new Student();
+        //使用形式一调用普通的泛型方法
+        stu.otherMethod(666);
+        //使用形式二调用普通的泛型方法
+        stu.<Integer>otherMethod(666);
+    }
+}
+
+```
 
 
+###8.5类型通配符
+    一般情况下,创建泛型类的实例对象时,应该为泛型类传入一个类型实参,以确定该泛型类的泛型类型。有时候,使用泛型类或者接口时传递的类型实参是不确定的,使用固定的类型形参接收类型实参存在局限性,此时就可以使用类型通配符接收不同的类型实参。
+
+####8.5.1类型通配符概述
+    类型通配符用一个问号(?)表示,类型通配符可以匹配任何类型的类型实参。
+
+```
+//定义泛型类Person
+class Person<T> {
+    private T info;
+    public Person(T info) {
+        this.info = info;
+    }
+    public T getInfo() {
+        return info;
+    }
+}
+
+public class Test9 {
+    public static void main(String[] args) {
+        //创建Person对象,传入String类型的类型实参
+        Person<?> person = new Person<String>("M1");
+        System.out.println(person.getInfo() + "..." + person.getInfo().getClass());
+        //创建Person对象,传入Integer类型的类型实参
+        person = new Person<String>("666");
+        System.out.println(person.getInfo() + "..." + person.getInfo().getClass());
+    }
+}
+
+```
+
+    注意：
+        如果创建Person对象时不使用类型通配符,而是使用指定的类型实参,会出现编译时异常。
+
+        在泛型中类名和泛型的声明是一个整体类型,Person<Object>并不是Person<String>的父类。
 
 
+####8.5.2类型通配符的限定
+
+    1.设定类型通配符的上限
+    当使用Person<?>时,表示泛型类Person可以接收所有类型的类型实参。但有时不想让某个泛型类接受所有类型的类型实参,只想接受指定的类型及其子类,这时可以为类型通配符设定上限。
+
+    格式：
+
+        <? extends 类>
+
+```
+import java.util.ArrayList;
+import java.util.Collection;
+
+public class Test10 {
+    //设定类型通配符的上限,此时传入的类型实参必须是Number类型或者其子类
+    public static void getElement(Collection<? extends Number> coll){ }
+    public static void main(String[] args) {
+        //创建Collection对象,传入Number类型的类型实参
+        Collection<Number> list1 = new ArrayList<Number>();
+        //
+        Collection<Integer> list2 = new ArrayList<Integer>();
+        //
+        Collection<String> list3 = new ArrayList<String>();
+        getElement(list1);
+        getElement(list2);
+        getElement(list3);
+    }
+}
+
+```
+
+    2.设定类型通配符的下限
+        设定类型通配符时,除了可以设定类型通配符的上限,也可以对类型通配符的下限进行设定。设定类型通配符的下限后,类型实参只能是设定的类型或其父类型。设定类型通配符的下限的语法格式为：
+
+        <? super 类>
 
 
+```
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
 
+public class Test11 {
+    //设定类型通配符的下限,此时传入的类型实参必须是Number类型或其父类
+    public static void getElement(Collection<? super Number> coll) { }
+    public static void main(String[] args) {
+        //创建Collection对象,传入Number类型的类型实参
+        Collection<Number> list1 = new ArrayList<Number>();
+        //创建Collection对象,传入Object类型的类型实参
+        Collection<Objects> list2 = new ArrayList<Object>();
+        //创建Collection对象,传入Integer类型的类型实参
+        Collection<Integer> list3 = new ArrayList<Integer>();
+        getElement(list1);
+        getElement(list2);
+        getElement(list3);
+    }
+}
 
-
-
+```
 
 
